@@ -1,3 +1,4 @@
+import '../../assets/oppose_assets.dart';
 import '../../types/domain_models.dart';
 
 class MockOpposeData {
@@ -16,12 +17,14 @@ class MockOpposeData {
       displayName: 'Maya',
       username: 'mayaTalks',
       status: FriendStatus.online,
+      avatarAsset: OpposeAssets.avatarMaya,
     ),
     Friend(
       id: 'raka',
       displayName: 'Raka',
       username: 'rakaReplies',
       status: FriendStatus.inRoom,
+      avatarAsset: OpposeAssets.avatarRaka,
     ),
     Friend(
       id: 'sari',

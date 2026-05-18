@@ -16,6 +16,16 @@ class OpposeAssets {
       '$base/oppose_ai_consent_bima_pointing_ai_bubble.png.png';
   static const bimaHome =
       '$base/oppose_home_bima_thinking_daily_debate.png.png';
+  static const homeLiveFriendAvatarSet =
+      '$base/oppose_home_live_friend_avatar_set.png.png';
+  static const homeStartRoomMug =
+      '$base/oppose_home_start_room_mug_sticker.png.png';
+  static const avatarMaya = '$base/oppose_chats_avatar_maya.png.png';
+  static const avatarRaka = '$base/oppose_chats_avatar_raka.png.png';
+  static const avatarStudyRoom =
+      '$base/oppose_chats_avatar_study_room_group.png.png';
+  static const avatarWeekendDebate =
+      '$base/oppose_chats_avatar_weekend_debate_group.png.png';
   static const bimaCreateRoom =
       '$base/oppose_create_room_bima_bottom_peek_mug.png.png';
   static const aiDrawerRobot =
