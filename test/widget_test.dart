@@ -15,52 +15,103 @@ void main() {
     await tester.pumpWidget(const OpposeApp());
     await tester.pumpAndSettle();
 
-    await tapVisibleText(tester, 'Start debating');
-    expect(find.text('Create your Oppose account'), findsOneWidget);
-
-    await tapVisibleText(tester, 'Create account');
-    expect(find.text('Enter your email or phone.'), findsOneWidget);
-
-    await tester.enterText(
-      find.byType(EditableText).at(0),
-      'friend@example.com',
-    );
-    await tester.enterText(find.byType(EditableText).at(1), 'friendly8');
-    await tester.pumpAndSettle();
-    await tapVisibleText(tester, 'Create account');
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pumpAndSettle();
-    expect(find.text('Pick your debate name'), findsOneWidget);
-
-    await tapVisibleText(tester, 'Continue');
-    expect(find.text('Use at least 2 characters.'), findsOneWidget);
-
-    await tester.enterText(find.byType(EditableText).at(0), "Bima's Friend");
-    await tester.enterText(find.byType(EditableText).at(1), 'thinkwithbima');
-    await tester.pump(const Duration(milliseconds: 500));
-    await tester.pumpAndSettle();
-    expect(find.text('Username available'), findsOneWidget);
-
-    await tapVisibleText(tester, 'Continue');
-    await tester.pump(const Duration(milliseconds: 300));
-    await tester.pumpAndSettle();
-    expect(find.text('What do you like to talk about?'), findsOneWidget);
-
-    await tapVisibleText(tester, 'Music');
-    await tapVisibleText(tester, 'Continue');
-    expect(find.text('How AI works in your room'), findsOneWidget);
-
-    await tapVisibleText(tester, 'Customize AI settings');
-    expect(find.text('AI settings preview'), findsOneWidget);
-    await tapVisibleText(tester, 'Close');
-
-    await tapVisibleText(tester, 'I understand');
+    await completeOnboarding(tester, openAISettings: true);
     expect(find.text("Hi, Bima's Friend"), findsOneWidget);
+  });
+
+  testWidgets('home daily debate selection works', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Agree');
+    expect(find.text('Agree selected'), findsOneWidget);
+
+    await tapVisibleFinder(tester, find.text('Oppose').last);
+    expect(find.text('Oppose selected'), findsOneWidget);
+  });
+
+  testWidgets('home opens recent chat and create room', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Should we make this a room?');
+    expect(
+      find.text('AI can suggest a balanced question when you ask.'),
+      findsOneWidget,
+    );
+
+    await tapVisibleText(tester, 'Home');
+    expect(find.text("Hi, Bima's Friend"), findsOneWidget);
+
+    await tapVisibleText(tester, 'Create room');
+    expect(find.text('Create a room'), findsOneWidget);
+  });
+
+  testWidgets('bottom navigation opens Chats and Profile', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Chats');
+    expect(find.text('Keep better talks going.'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Profile');
+    expect(find.text('Your respectful debate identity.'), findsOneWidget);
   });
 }
 
+Future<void> completeOnboarding(
+  WidgetTester tester, {
+  bool openAISettings = false,
+}) async {
+  await tapVisibleText(tester, 'Start debating');
+  expect(find.text('Create your Oppose account'), findsOneWidget);
+
+  await tapVisibleText(tester, 'Create account');
+  expect(find.text('Enter your email or phone.'), findsOneWidget);
+
+  await tester.enterText(find.byType(EditableText).at(0), 'friend@example.com');
+  await tester.enterText(find.byType(EditableText).at(1), 'friendly8');
+  await tester.pumpAndSettle();
+  await tapVisibleText(tester, 'Create account');
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pumpAndSettle();
+  expect(find.text('Pick your debate name'), findsOneWidget);
+
+  await tapVisibleText(tester, 'Continue');
+  expect(find.text('Use at least 2 characters.'), findsOneWidget);
+
+  await tester.enterText(find.byType(EditableText).at(0), "Bima's Friend");
+  await tester.enterText(find.byType(EditableText).at(1), 'thinkwithbima');
+  await tester.pump(const Duration(milliseconds: 500));
+  await tester.pumpAndSettle();
+  expect(find.text('Username available'), findsOneWidget);
+
+  await tapVisibleText(tester, 'Continue');
+  await tester.pump(const Duration(milliseconds: 300));
+  await tester.pumpAndSettle();
+  expect(find.text('What do you like to talk about?'), findsOneWidget);
+
+  await tapVisibleText(tester, 'Music');
+  await tapVisibleText(tester, 'Continue');
+  expect(find.text('How AI works in your room'), findsOneWidget);
+
+  if (openAISettings) {
+    await tapVisibleText(tester, 'Customize AI settings');
+    expect(find.text('AI settings preview'), findsOneWidget);
+    await tapVisibleText(tester, 'Close');
+  }
+
+  await tapVisibleText(tester, 'I understand');
+}
+
 Future<void> tapVisibleText(WidgetTester tester, String text) async {
-  final finder = find.text(text);
+  await tapVisibleFinder(tester, find.text(text));
+}
+
+Future<void> tapVisibleFinder(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
   await tester.pumpAndSettle();
   await tester.tap(finder);

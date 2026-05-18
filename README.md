@@ -36,3 +36,5 @@ Sprint 0 created the Flutter project foundation and documented the route/compone
 Sprint 1 added the Oppose app shell, theme tokens, navigation stubs, core components, mock data, service boundaries, and asset registration.
 
 Sprint 2 implemented the onboarding flow from Welcome through AI Consent into Home, including validation, mock onboarding state, username availability, interest selection, AI consent copy, and a full-flow widget test. Sprint 3 should focus on Home and main navigation polish.
+
+Sprint 3 polished Home into the daily dashboard with typed Home state, Daily Debate selection, live friends, recent chats, Start Room CTA, stable bottom navigation, and Home navigation tests. Sprint 4 should focus on Messaging MVP.
