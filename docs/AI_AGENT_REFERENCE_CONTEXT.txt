@@ -1,0 +1,1043 @@
+# Oppose Reference Context for AI Coding Agent
+
+File purpose:
+This document explains how to use the manually generated Oppose reference pages and illustration assets while rebuilding or implementing the Oppose mobile app.
+
+Recommended location in repo:
+docs/AI_AGENT_REFERENCE_CONTEXT.txt
+
+Reference folders:
+- docs/refrences/pages
+- docs/refrences/assets
+
+Important spelling note:
+The current folder name is `refrences`, not `references`. Use the existing path exactly unless the project owner renames it.
+
+===============================================================================
+1. PRODUCT CONTEXT
+===============================================================================
+
+Oppose is a daily social AI debate app.
+
+The product should feel like:
+- a warm daily social app
+- a friendly debate space
+- a comfortable place for friends to discuss different takes
+- AI-assisted, but always user-controlled
+- playful, respectful, and emotionally safe
+
+The product should NOT feel like:
+- a political conflict platform
+- a casino or prediction/betting app
+- a corporate AI dashboard
+- a cold productivity tool
+- a futuristic control panel
+- a generic SaaS template
+
+Core product idea:
+Users can talk with friends, create debate rooms, chat, invite AI as a helper, and receive optional summaries. The app rewards respectful conversation, curiosity, and open-minded disagreement.
+
+Core brand line:
+“Different take, better talk.”
+
+===============================================================================
+2. HOW TO USE THE REFERENCE PAGES
+===============================================================================
+
+Reference pages folder:
+docs/refrences/pages
+
+The reference page images are the primary visual and UX direction for the app.
+
+Use them as:
+- layout references
+- spacing references
+- component hierarchy references
+- color/texture references
+- visual mood references
+- screen-specific UX references
+
+Do NOT use them as:
+- static background screenshots
+- full-screen image replacements for real UI
+- final text rendering assets
+- hardcoded bitmap layouts
+
+The app must be built with real native/components:
+- real buttons
+- real text
+- real inputs
+- real navigation
+- real scroll views
+- real toggles
+- real chat cells
+- real cards
+- real accessibility labels
+- real responsive layout
+
+The reference pages show how the UI should look, but the implemented app must remain flexible, responsive, and maintainable.
+
+If a visual detail appears in the page reference but is hard to implement exactly, prioritize:
+1. UX clarity
+2. component correctness
+3. visual consistency
+4. performance
+5. exact decorative detail
+
+Do not sacrifice usability for decoration.
+
+===============================================================================
+3. HOW TO USE THE ASSET FOLDER
+===============================================================================
+
+Assets folder:
+docs/refrences/assets
+
+The asset images are manually generated illustration assets for the app.
+
+Use assets for:
+- Bima mascot illustrations
+- user avatar illustrations
+- AI robot / AI Bima illustrations
+- badges
+- decorative stickers
+- paper/tape textures
+- custom icons that define the Oppose brand
+- room/topic decorative elements
+- profile badge visuals
+- onboarding and safety illustrations
+
+Do NOT bake important UI text into image assets.
+All important interface copy should be rendered as real app text.
+
+Correct usage:
+- Use a Bima illustration as an Image component.
+- Use a badge PNG as an Image component.
+- Use a tape/sticker PNG as decorative Image.
+- Use native Text for titles, labels, button text, field labels, and accessibility.
+
+Incorrect usage:
+- Importing an entire generated screen as a background.
+- Cropping important UI from a screenshot.
+- Using image text for titles or forms.
+- Building the app as static images.
+
+Recommended asset approach:
+- Keep assets organized by page or semantic use.
+- Use transparent PNGs where available.
+- Use 2x or 3x density if the project supports it.
+- Optimize large assets before production.
+- Prefer reusable assets over duplicated page-specific crops.
+- Maintain meaningful names.
+
+Recommended naming pattern:
+oppose_[page]_[asset_description].png
+
+Examples:
+oppose_live_room_avatar_ai_bima.png
+oppose_profile_badge_respect_champion_crown.png
+oppose_ai_consent_summary_delete_icon.png
+
+===============================================================================
+4. BRAND STYLE SYSTEM
+===============================================================================
+
+Oppose visual style:
+- warm handmade scrapbook
+- cream paper background
+- torn paper cards
+- sticker-like illustration assets
+- soft shadows
+- rounded cards
+- playful but clean layout
+- Javanese-inspired details
+- friendly mascot presence
+- hand-drawn accent marks
+- mobile-first spacing
+
+Core colors:
+- Maroon red: primary brand/action color
+- Mint green: positive, safe, selected state, social warmth
+- Sunflower yellow: highlights, tape, small emphasis stickers
+- Indigo blue: secondary accent, AI/translation/special detail
+- Warm cream: main background and paper cards
+- Soft gray/black: body text and neutral icons
+
+Suggested approximate palette:
+- Maroon Red: #8E1D2C
+- Mint Green: #72C8A3
+- Sunflower Yellow: #FFD34D
+- Indigo Blue: #384BA7
+- Warm Cream: #FFF6E6
+- Soft Ink: #222222
+- Muted Gray: #6F6F6F
+
+Typography direction:
+- Friendly rounded heading type
+- Highly readable body type
+- Slightly playful but not childish
+- Avoid overly corporate fonts
+- Avoid futuristic sci-fi fonts
+
+Layout direction:
+- large friendly headings
+- generous vertical spacing
+- rounded paper cards
+- clear action hierarchy
+- one obvious primary action per screen
+- bottom navigation for main app screens
+- soft card shadows
+- decorative assets placed around edges, never blocking usability
+
+===============================================================================
+5. GLOBAL UX RULES
+===============================================================================
+
+1. Build a real social app, not an art board.
+The generated references are visually rich, but the app must be usable.
+
+2. Important controls must be obvious.
+Especially:
+- Join room
+- Leave room
+- Mute
+- Ask AI
+- Turn off AI
+- Report
+- Block
+- Save/delete summary
+
+3. AI must always feel controlled by the user.
+AI states should be visible:
+- AI Off
+- Not listening yet
+- Listening
+- Thinking
+- Speaking
+- Summary generated
+- Memory off
+
+4. AI should not look like a human user.
+AI avatars and messages must be clearly labeled as AI.
+
+5. Safety features must be visible and calm.
+Report/block/leave actions should be easy to find, but not visually terrifying.
+
+6. Use native text for all UI copy.
+The generated images can guide typography and layout, but final UI text must be coded.
+
+7. Avoid overcrowding.
+The visual system is decorative, but core UX should remain simple.
+
+8. Keep page backgrounds light and warm.
+Most Oppose screens use warm cream backgrounds with paper texture.
+
+9. Preserve the mascot identity.
+Bima is a major brand asset and should appear especially in onboarding, home, AI, profile, and summary moments.
+
+10. Respect mobile constraints.
+Make all key actions reachable and readable on normal smartphone sizes.
+
+===============================================================================
+6. PAGE-BY-PAGE IMPLEMENTATION CONTEXT
+===============================================================================
+
+-------------------------------------------------------------------------------
+6.1 Welcome
+-------------------------------------------------------------------------------
+
+Reference page:
+Welcome.png
+
+Purpose:
+Introduce Oppose, show brand identity, explain the app in one warm sentence, and move users into onboarding.
+
+Key UI:
+- Large Oppose logo
+- Language switch: English / Indonesia
+- Bima mascot holding a mug and waving
+- Value proposition card
+- Primary CTA: Start debating
+- Secondary CTA: I already have an account
+- Trust note: AI joins only when you allow it.
+
+Important assets:
+- Bima mascot with mug/wave
+- heart chat sticker
+- yellow starburst sticker
+- privacy lock badge
+- maroon batik corner
+- mint tape
+- blue squiggle
+
+Implementation notes:
+- Use the visual as the first emotional impression.
+- Keep CTA area clear and reachable.
+- Do not overload with product explanation.
+
+-------------------------------------------------------------------------------
+6.2 Sign Up
+-------------------------------------------------------------------------------
+
+Reference page:
+Sign Up.png
+
+Purpose:
+Allow new users to create an account.
+
+Key UI:
+- Oppose logo on maroon torn-paper header
+- Title: Create your Oppose account
+- Subtitle: Join daily debates with friends and AI.
+- Email or phone input
+- Password input
+- Create account button
+- Continue with Google
+- Continue with Apple
+- Terms and Privacy Policy
+- Login link
+
+Important assets:
+- full-body Bima waving
+- crown tape sticker
+- green tape
+- blue tape
+- maroon flower sticker
+
+Implementation notes:
+- Form fields must be native inputs.
+- Password visibility icon should be interactive.
+- Terms and Privacy Policy text should be tappable.
+
+-------------------------------------------------------------------------------
+6.3 Username Setup
+-------------------------------------------------------------------------------
+
+Reference page:
+Username Setup.png
+
+Purpose:
+Let users create their social identity.
+
+Key UI:
+- Oppose logo
+- Bima peeking from behind card
+- Title: Pick your debate name
+- Avatar placeholder with edit badge
+- Display name input
+- Username input
+- Availability status
+- Continue button
+- Note: You can change this later.
+
+Important assets:
+- Bima peeking/waving
+- default avatar placeholder
+- blue edit pencil badge
+- yellow starburst
+- flower sticker
+- paper card
+
+Implementation notes:
+- Validate username availability.
+- Show success and error states.
+- Avatar edit may be placeholder in MVP but should be designed as interactive.
+
+-------------------------------------------------------------------------------
+6.4 Interest Setup
+-------------------------------------------------------------------------------
+
+Reference page:
+Interest Setup.png
+
+Purpose:
+Collect user interest signals for debate suggestions.
+
+Key UI:
+- Oppose logo
+- Bima waving with speech bubble
+- Title: What do you like to talk about?
+- Subtitle: We’ll suggest better daily debates.
+- Interest chips:
+  School, Technology, Music, Friendship, Gaming, Food, Culture, Movies, Life, Random Takes
+- Continue button
+- Skip for now link
+
+Important assets:
+- Bima interest selection mascot
+- school icon
+- technology icon
+- music icon
+- food icon
+- culture icon
+- random takes icon
+- yellow starburst
+- tape decorations
+- notebook paper panel
+
+Implementation notes:
+- Chips should be selectable native components.
+- Selected chips use mint green fill and check badge.
+- Keep selection low-pressure; allow skip.
+
+-------------------------------------------------------------------------------
+6.5 AI Consent Setup
+-------------------------------------------------------------------------------
+
+Reference page:
+AI Consent Setup.png
+
+Purpose:
+Explain AI privacy, consent, control, and optional summaries.
+
+Key UI:
+- Oppose logo
+- Title: How AI works in your room
+- Subtitle: You stay in control.
+- Three explanation cards:
+  1. AI only listens when it is turned on.
+  2. You can mute or remove AI anytime.
+  3. Summaries are optional and deletable.
+- AI status preview: AI Off
+- Primary CTA: I understand
+- Secondary CTA: Customize AI settings
+
+Important assets:
+- Bima pointing with AI bubble
+- AI toggle illustration
+- muted microphone icon
+- summary/delete document icon
+- green check circles
+- AI off status pill
+- bottom batik border
+
+Implementation notes:
+- This screen must feel transparent and safe.
+- It should not imply hidden AI listening.
+- CTA should be clear and reassuring.
+
+-------------------------------------------------------------------------------
+6.6 Home
+-------------------------------------------------------------------------------
+
+Reference page:
+Home.png
+
+Purpose:
+Daily dashboard for starting debate, seeing live friends, recent chats, and quick room creation.
+
+Key UI:
+- Header: Oppose
+- Greeting: Hi, Bima’s Friend
+- Daily Debate card
+- Question: Is remote work good for the future?
+- Agree and Oppose buttons
+- Live friends row
+- Recent chats
+- Start a room card
+- Bottom navigation: Home, Debate, Create, Activity, Profile
+
+Important assets:
+- Bima thinking daily debate illustration
+- live friend avatar set
+- start room mug sticker
+- crown sticker
+- paper/tape decorations
+
+Implementation notes:
+- This is the main retention screen.
+- Make it scannable.
+- Daily Debate card should be interactive.
+- Start room should be a primary habit loop.
+
+-------------------------------------------------------------------------------
+6.7 Chats List
+-------------------------------------------------------------------------------
+
+Reference page:
+Chats List.png
+
+Purpose:
+Show recent direct and group chats.
+
+Key UI:
+- Title: Chats
+- Search bar
+- Chat list:
+  Maya
+  Study Room
+  Raka
+  Weekend Debate
+- Unread count badges
+- Floating new chat button
+- Bottom navigation
+
+Important assets:
+- Maya avatar
+- Study Room group avatar
+- Raka avatar
+- Weekend Debate group avatar
+- floating new chat icon
+- crown sticker
+
+Implementation notes:
+- Chat cells must be native components.
+- Support unread states.
+- Use real list data when integrated.
+- Floating button should create a new chat/group.
+
+-------------------------------------------------------------------------------
+6.8 Direct Chat
+-------------------------------------------------------------------------------
+
+Reference page:
+Direct Chat.png
+
+Purpose:
+One-to-one conversation with friend and AI suggestion.
+
+Key UI:
+- Header with friend avatar, name Maya, online status
+- Call icon
+- Incoming chat bubble
+- Outgoing chat bubble
+- AI helper suggestion card
+- Quick buttons: Ask AI, Start room
+- Message input
+- Attachment icon
+- Send button
+
+Important assets:
+- Maya avatar large
+- AI Helper robot avatar
+- yellow sun sticker
+- green flower sticker
+- tape decorations
+
+Implementation notes:
+- AI messages must be clearly labeled.
+- Message input should be native.
+- Start room button should create or open a voice room.
+- Chat bubbles should handle variable text length.
+
+-------------------------------------------------------------------------------
+6.9 Create Room
+-------------------------------------------------------------------------------
+
+Reference page:
+Create Room.png
+
+Purpose:
+Configure and start a voice room.
+
+Key UI:
+- Title: Create a room
+- Room topic input
+- Room type cards:
+  Quick Hangout, Daily Debate, Study Talk, Custom
+- Invite friends avatar row
+- AI mode:
+  Off, Quiet Helper, Brainstormer, Moderator-lite
+- Summary setting:
+  Off, Private to me, Shared with room
+- Start room button
+
+Important assets:
+- quick hangout mug icon
+- daily debate sun icon
+- study talk book icon
+- custom gear icon
+- friend avatar row
+- Bima bottom-right peeking with mug
+- tape/sticker decorations
+
+Implementation notes:
+- Room topic input should be editable.
+- Selected states use mint green border/fill and check badge.
+- AI mode selection must be explicit.
+- Summary privacy must be clear.
+
+-------------------------------------------------------------------------------
+6.10 Room Lobby
+-------------------------------------------------------------------------------
+
+Reference page:
+Room Lobby.png
+
+Purpose:
+Pre-join screen where user checks friends, mic, AI status, and room rule.
+
+Key UI:
+- Title: Daily Debate Room
+- Subtitle: Before you join
+- Friend preview: 3 friends are here
+- Invite more slot
+- Mic test card
+- Audio route dropdown
+- AI status card: AI Quiet Helper / Not listening yet
+- Room rule card
+- Join room button
+- Invite friends button
+- Change AI settings link
+
+Important assets:
+- top chat badge
+- friend avatar row
+- mic ready icon
+- AI quiet helper icon
+- respect/handshake icon
+- tape decorations
+
+Implementation notes:
+- Make it clear that AI is not listening before joining.
+- Mic test should reflect permission state.
+- Join button should be primary.
+
+-------------------------------------------------------------------------------
+6.11 Live Voice Room
+-------------------------------------------------------------------------------
+
+Reference page:
+Live Voice Room.png
+
+Purpose:
+Main live audio room interface.
+
+Key UI:
+- Header with room title: Remote Work Debate
+- Privacy pill: Friends only
+- AI status pill: AI Listening
+- Participant cards:
+  Maya, Raka, You, AI Bima
+- Speaking indicator around active speaker
+- Topic card
+- Connection status: Stable / Good connection
+- Bottom controls:
+  Mute, Chat, Ask AI, Invite, Leave
+
+Important assets:
+- Maya participant card
+- Raka participant card
+- You participant card with speaking ring
+- AI Bima participant card
+- torn paper topic card
+- control icons
+- bottom batik border
+
+Implementation notes:
+- Leave button must be visible.
+- Mute state must be obvious.
+- AI Bima must be visually distinct from humans.
+- Speaking indicator must update in real time.
+- Connection state should handle reconnecting/poor network.
+
+-------------------------------------------------------------------------------
+6.12 AI Drawer
+-------------------------------------------------------------------------------
+
+Reference page:
+AI Drawer.png
+
+Purpose:
+Bottom sheet for controlling AI in a live room.
+
+Key UI:
+- Dimmed live room behind drawer
+- AI Helper header
+- AI status pill: Listening
+- Mode selector:
+  Quiet Helper, Brainstormer, Translator, Moderator-lite
+- Quick actions:
+  Summarize so far
+  Suggest a better question
+  Explain both sides
+  Translate
+- Memory section: Memory is off
+- Turn off AI button
+- Ask AI button
+- Input: Ask something...
+
+Important assets:
+- AI robot Bima with headset
+- Quiet Helper icon
+- Brainstormer lightbulb icon
+- Translator icon
+- Moderator/group icon
+- Memory off lock icon
+- crown sticker
+
+Implementation notes:
+- This is a bottom sheet overlay, not a full page.
+- AI status must always be visible.
+- Turn off AI must be easy to find.
+- Memory off copy must be clear.
+- Quick actions should trigger AI requests.
+
+-------------------------------------------------------------------------------
+6.13 Room Summary
+-------------------------------------------------------------------------------
+
+Reference page:
+Room Summary.png
+
+Purpose:
+Show AI-generated summary after a room ends.
+
+Key UI:
+- Title: Room Summary
+- Subtitle: Remote Work Debate · 24 min
+- AI label: Generated by AI from allowed room context.
+- Sections:
+  Main takeaways
+  Best arguments
+  Funny moments
+  Open questions
+- Privacy card: Only you can see this summary
+- Buttons:
+  Save
+  Share with room
+  Delete summary
+
+Important assets:
+- Bima pointing
+- lightbulb icon
+- balance scales icon
+- smile icon
+- question mark icon
+- globe chat sticker
+- HA HA bubble
+- decorative stickers
+
+Implementation notes:
+- Summary text must be real text.
+- Delete summary must be functional.
+- Privacy state must be visible.
+- AI-generated label is required.
+
+-------------------------------------------------------------------------------
+6.14 My Profile
+-------------------------------------------------------------------------------
+
+Reference page:
+My Profile.png
+
+Purpose:
+Show user identity, stats, badges, and weekly summary.
+
+Key UI:
+- Oppose header
+- Notification icon
+- Large avatar
+- Name: Bima’s Friend
+- Username: @thinkwithbima
+- Bio: Different take, better talk.
+- Stats: Debates, Streak, Friends
+- Badges:
+  Good Listener
+  Respect Champion
+  Open Mind
+- Weekly Summary chart
+- Buttons:
+  Edit profile
+  Share profile
+- Bottom navigation
+
+Important assets:
+- large Bima profile avatar
+- Good Listener badge
+- Respect Champion badge
+- Open Mind badge
+- crown sticker
+- paper/tape decorations
+
+Implementation notes:
+- Stats should be dynamic later.
+- Badges can be static in MVP but should be componentized.
+- Chart can be native simple chart, not baked into image.
+- Profile edit button should be ready for future flow.
+
+-------------------------------------------------------------------------------
+6.15 Report Flow
+-------------------------------------------------------------------------------
+
+Reference page:
+Report Flow.png
+
+Purpose:
+Allow user to report unsafe/problematic behavior.
+
+Key UI:
+- Back button
+- Title: Report a problem
+- Subtitle: Tell us what happened.
+- Reason list:
+  Harassment
+  Spam
+  Unsafe behavior
+  Hate or discrimination
+  Privacy concern
+  Other
+- Optional note field
+- Toggle: Also block this user
+- Submit report button
+- Cancel button
+- Safety reassurance card:
+  You can leave or mute anytime. Your safety comes first.
+
+Important assets:
+- alert shield header
+- reason icons:
+  harassment, spam, unsafe, hate, privacy, other
+- safety heart icon
+- tape decorations
+- bottom batik border
+
+Implementation notes:
+- Keep this screen calm and serious.
+- Use native radio buttons/toggles/text area.
+- Submit should validate a reason selection.
+- If user enables block toggle, submit both report and block actions.
+
+===============================================================================
+7. REUSABLE DECORATIVE ASSETS
+===============================================================================
+
+Reusable assets may appear across many pages:
+- maroon batik corner
+- bottom batik border
+- yellow tape
+- mint tape
+- pink tape
+- blue tape
+- blue squiggle
+- maroon flower sticker
+- mint flower sticker
+- yellow starburst sticker
+- notebook paper card
+- torn paper cards
+- crown sticker
+
+Usage rules:
+- Decoration should never block text or controls.
+- Decoration should not reduce contrast.
+- Use consistent placement patterns:
+  - batik corner near top-left
+  - batik border at bottom
+  - tape on card corners
+  - small stickers near empty space
+  - squiggle as accent, not as content
+- Do not overuse every asset on every page.
+- Keep pages clean and usable.
+
+===============================================================================
+8. COMPONENT SYSTEM RECOMMENDATION
+===============================================================================
+
+Build these reusable UI components:
+
+Core components:
+- OpposeScreen
+- OpposeHeader
+- OpposeLogo
+- PaperCard
+- TornPaperCard
+- StickerImage
+- TapeDecoration
+- PrimaryButton
+- SecondaryButton
+- OutlineButton
+- SafetyButton
+- TextInput
+- SearchInput
+- SelectableChip
+- SelectableCard
+- Avatar
+- AvatarGroup
+- Badge
+- BottomNavigation
+- StatusPill
+- AIStatusPill
+- EmptyState
+- BottomSheet
+
+Room components:
+- RoomParticipantCard
+- SpeakingIndicator
+- MicControlButton
+- RoomControlBar
+- RoomTopicCard
+- ConnectionStatusPill
+- AIControlDrawer
+
+Chat components:
+- ChatListItem
+- ChatBubble
+- AIMessageCard
+- MessageInputBar
+- QuickActionButton
+
+Safety components:
+- ReportReasonRow
+- SafetyReassuranceCard
+- BlockToggle
+- ReportSubmitButton
+
+Profile components:
+- ProfileHeaderCard
+- StatCard
+- BadgeRow
+- WeeklySummaryChart
+
+===============================================================================
+9. IMPLEMENTATION PRIORITY
+===============================================================================
+
+Priority 1: Core navigation and visual system
+- App shell
+- Theme tokens
+- Bottom navigation
+- Paper card components
+- Buttons
+- Text inputs
+- Avatar/image handling
+
+Priority 2: Onboarding pages
+- Welcome
+- Sign Up
+- Username Setup
+- Interest Setup
+- AI Consent Setup
+
+Priority 3: Daily app loop
+- Home
+- Chats List
+- Direct Chat
+- Create Room
+- Room Lobby
+- Live Voice Room
+- AI Drawer
+- Room Summary
+
+Priority 4: Identity and safety
+- My Profile
+- Report Flow
+
+Do not start with complex backend integration before the UI shell and component system are stable.
+
+===============================================================================
+10. RESPONSIVE AND ACCESSIBILITY RULES
+===============================================================================
+
+Responsive:
+- Support common iPhone and Android dimensions.
+- Avoid hardcoded absolute positioning for all layout.
+- Use safe-area padding.
+- Use scroll views for long screens.
+- Keep bottom buttons reachable.
+- Avoid clipping on smaller devices.
+
+Accessibility:
+- All buttons need accessible labels.
+- AI state must be text-readable, not color-only.
+- Selected states must use checkmarks or labels, not color alone.
+- Text contrast must remain readable over cream backgrounds.
+- Important text should be native text.
+- Tap targets should be comfortable.
+
+Performance:
+- Optimize PNG assets.
+- Avoid loading giant full-resolution images for small stickers.
+- Cache frequently used assets.
+- Use vector/native icons for simple system icons when possible.
+- Use PNG illustrations only for brand-specific assets.
+
+===============================================================================
+11. AI-SPECIFIC PRODUCT RULES
+===============================================================================
+
+AI must be represented transparently.
+
+Required AI UI states:
+- AI Off
+- Not listening yet
+- AI Listening
+- AI Thinking
+- AI Speaking
+- Memory Off
+- Summary Generated
+
+Required AI controls:
+- Ask AI
+- Turn off AI
+- Change AI settings
+- AI mode selection
+- Summary privacy setting
+- Delete summary
+
+AI safety copy:
+- “AI only listens when it is turned on.”
+- “You can mute or remove AI anytime.”
+- “Summaries are optional and deletable.”
+- “Generated by AI from allowed room context.”
+- “Memory is off.”
+
+Never imply hidden listening.
+Never hide the AI off control.
+Never make AI look like a human user.
+Never save summaries without a visible user-facing privacy state.
+
+===============================================================================
+12. DESIGN DO AND DO NOT
+===============================================================================
+
+DO:
+- Use warm cream paper backgrounds.
+- Use maroon for primary actions.
+- Use mint green for selected/safe/success states.
+- Use yellow for highlight stickers and tape.
+- Use indigo sparingly for secondary/AI/translation details.
+- Use Bima mascot to make the app feel human.
+- Keep cards rounded and soft.
+- Build real components from visual references.
+- Preserve handmade scrapbook identity.
+
+DO NOT:
+- Use the reference page as a single background image.
+- Use baked text from images.
+- Build unreadable tiny labels.
+- Overuse stickers until the UI becomes noisy.
+- Make the AI feel hidden or autonomous.
+- Make report flow visually scary.
+- Use casino, odds, cash, betting, or gambling visuals.
+- Make the app look like a political news app.
+- Replace functional controls with decorative images.
+
+===============================================================================
+13. SCREEN FILE CHECKLIST FOR AGENT
+===============================================================================
+
+Before implementing a page:
+1. Open the matching page reference in docs/refrences/pages.
+2. Identify required assets from docs/refrences/assets.
+3. Build the layout with native components.
+4. Add illustration assets as Image components.
+5. Render all important text natively.
+6. Add selected/loading/empty/error states where relevant.
+7. Check responsiveness.
+8. Check accessibility labels.
+9. Confirm AI/safety states are explicit where needed.
+10. Compare final screen against reference page for visual consistency.
+
+===============================================================================
+14. FINAL INTENT
+===============================================================================
+
+The goal is not to copy screenshots pixel by pixel.
+
+The goal is to build a real, production-ready mobile app that captures the same feeling as the references:
+warm, handmade, friendly, respectful, safe, and social.
+
+Oppose should feel like a place where people can disagree without becoming enemies.
+
+Core feeling:
+“Different take, better talk.”

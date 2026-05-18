@@ -1,0 +1,2325 @@
+# OPPOSE AI AGENT BUILD GUIDE AND COMPLETE SPRINT PLAN
+
+Recommended file location:
+C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\OPPOSE_AI_AGENT_BUILD_GUIDE_AND_SPRINT_PLAN.txt
+
+Purpose:
+This file is the main instruction document for an AI coding agent that will build the Oppose mobile app. It tells the agent what to read first, how to understand the product, how to use the visual reference files, how to structure development, and how to execute the project sprint by sprint.
+
+This file is Oppose-only.
+Do not build Clash features inside Oppose MVP unless explicitly requested later.
+
+===============================================================================
+0. IMPORTANT DIRECTIVE FOR THE AI CODING AGENT
+===============================================================================
+
+You are building Oppose, a daily social AI debate app.
+
+Before writing or modifying code, you must first understand:
+1. The business/product foundation.
+2. The Oppose-only visual and UX references.
+3. The sprint plan and dependency order.
+4. The required MVP scope.
+5. The safety, AI consent, and privacy rules.
+
+Do not jump directly into implementation without reading the documentation.
+
+Your first action in the repo should be to inspect these folders/files:
+
+1. Master development docs:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\docs
+
+2. Oppose reference context:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\AI_AGENT_REFERENCE_CONTEXT.txt
+
+3. Oppose reference pages:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\pages
+
+4. Oppose reference assets:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\assets
+
+Important spelling note:
+The folder is currently named `refrences`, not `references`.
+Use the existing folder name exactly unless the owner renames it.
+
+After reading the docs, create or update implementation according to this guide.
+
+===============================================================================
+1. AGENT ROLE
+===============================================================================
+
+You are acting as a senior product-minded full-stack/mobile AI coding agent.
+
+Your job is not only to generate code.
+Your job is to build a real, maintainable app foundation that follows the product strategy.
+
+You must behave like:
+- Mobile architect
+- Product engineer
+- UI implementation engineer
+- UX preservation engineer
+- AI safety-aware engineer
+- QA-minded developer
+- Documentation maintainer
+
+You must not behave like:
+- A code-only bot that ignores product context
+- A designer that only makes static screens
+- A prototype builder that hardcodes everything
+- An agent that invents new scope without permission
+- An agent that skips safety and AI consent rules
+- An agent that builds gambling, betting, cash-out, or token economy mechanics
+
+===============================================================================
+2. PRODUCT SUMMARY
+===============================================================================
+
+Product name:
+Oppose
+
+Core brand line:
+Different take, better talk.
+
+Product category:
+Daily social AI communication app for friends, small groups, casual debate, and respectful disagreement.
+
+Oppose is:
+- a daily social app
+- a friendly debate app
+- a group chat and voice room app
+- an AI-assisted conversation app
+- a warm, culturally distinctive, scrapbook-style mobile experience
+- a product that makes disagreement feel safe, friendly, and useful
+
+Oppose is not:
+- a political warfare app
+- a gambling app
+- a crypto/token app
+- a cold AI assistant app
+- a corporate productivity dashboard
+- a generic chat clone
+- a futuristic sci-fi control panel
+
+Core user loop:
+1. User signs up.
+2. User creates a profile identity.
+3. User selects interests.
+4. User understands AI consent.
+5. User lands on Home.
+6. User chats with friends or creates a room.
+7. User joins a voice room.
+8. User can ask AI for help.
+9. User can leave safely.
+10. User receives an optional summary.
+11. User returns later for another daily debate.
+
+===============================================================================
+3. MVP SCOPE LOCK
+===============================================================================
+
+Build Oppose MVP first.
+
+MVP includes:
+- Welcome / onboarding
+- Sign up / login shell
+- Username setup
+- Interest setup
+- AI consent setup
+- Home
+- Chats list
+- Direct chat
+- Create room
+- Room lobby
+- Live voice room UI
+- AI drawer
+- Room summary
+- My profile
+- Report flow
+- Basic navigation
+- Mock/local state where backend is not ready
+- Clear component architecture
+- Clear future backend integration boundaries
+
+MVP later or backend-dependent includes:
+- Real auth provider integration
+- Real chat persistence
+- Real friend graph
+- Real WebRTC/SFU voice rooms
+- Real AI orchestration
+- Real notification service
+- Real moderation queue
+- Real analytics backend
+
+Explicitly excluded from Oppose MVP:
+- Clash global debate events
+- Clash event calendar
+- Clash ranking and leaderboard
+- Clash spectator voting
+- Real-money betting
+- Cash-out mechanics
+- Transferable coins
+- Crypto wallet
+- Token economy
+- Paid prediction mechanics
+- Gambling-style odds or rewards
+- Large public forums
+- Complex creator monetization
+- Marketplace or avatar economy
+- Autonomous AI agents that act without user control
+
+If the owner asks for a new feature, classify it:
+- P0: required for prototype loop
+- P1: required for closed beta
+- P2: public beta improvement
+- P3: later polish/growth
+
+Never add P2/P3 scope before P0/P1 is stable unless the owner explicitly approves.
+
+===============================================================================
+4. REQUIRED READING ORDER
+===============================================================================
+
+Before implementation, read and summarize internally:
+
+1. Master docs in:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\docs
+
+Look for:
+- product direction
+- development strategy
+- complete page inventory
+- architecture
+- sprint plan
+- safety rules
+- AI rules
+- QA and launch readiness
+
+2. Oppose reference context:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\AI_AGENT_REFERENCE_CONTEXT.txt
+
+Look for:
+- how to use reference pages
+- how to use reference assets
+- page-by-page implementation context
+- component recommendations
+- AI-specific UI rules
+- design do/don't rules
+
+3. Page references:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\pages
+
+Expected pages:
+- Welcome.png
+- Sign Up.png
+- Username Setup.png
+- Interest Setup.png
+- AI Consent Setup.png
+- Home.png
+- Chats List.png
+- Direct Chat.png
+- Create Room.png
+- Room Lobby.png
+- Live Voice Room.png
+- AI Drawer.png
+- Room Summary.png
+- My Profile.png
+- Report Flow.png
+
+4. Asset references:
+   C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\assets
+
+Expected asset types:
+- Bima mascot
+- AI Bima / AI robot
+- avatars
+- badges
+- stickers
+- tape
+- paper cards
+- icons
+- safety illustrations
+- decorative borders
+
+Do not start coding UI until you know which assets belong to which screen.
+
+===============================================================================
+5. REFERENCE USAGE RULES
+===============================================================================
+
+Use page reference images as:
+- layout direction
+- visual target
+- spacing inspiration
+- component hierarchy reference
+- color and mood reference
+- UX structure reference
+
+Do not use page reference images as:
+- full-screen image backgrounds
+- static app screens
+- baked UI
+- source of text screenshots
+- replacement for real components
+
+Use assets as:
+- Image components
+- decorative stickers
+- mascot images
+- badge images
+- avatar images
+- custom brand icons
+
+Do not use assets as:
+- replacements for native text
+- inaccessible buttons
+- unresponsive fixed layout
+- screenshots cropped into fake UI
+
+All important UI text must be rendered as real app text.
+
+All main interactions must be real:
+- buttons
+- inputs
+- toggles
+- tabs
+- bottom sheets
+- chat list items
+- room controls
+- report options
+- AI controls
+
+===============================================================================
+6. VISUAL SYSTEM
+===============================================================================
+
+Oppose visual personality:
+- warm
+- handmade
+- scrapbook
+- friendly
+- respectful
+- culturally distinctive
+- human
+- playful but not childish
+- safe but not boring
+- social-first
+
+Core colors:
+- Maroon Red: primary action, brand, important headings
+- Mint Green: selected, positive, safe, online, agree
+- Sunflower Yellow: highlight, tape, emphasis, friendly accent
+- Indigo Blue: secondary accent, AI/translation/special detail
+- Warm Cream: main background
+- Soft Ink: body text
+- Muted Gray: secondary text and neutral icons
+
+Suggested palette:
+- Maroon Red: #8E1D2C
+- Mint Green: #72C8A3
+- Sunflower Yellow: #FFD34D
+- Indigo Blue: #384BA7
+- Warm Cream: #FFF6E6
+- Soft Ink: #222222
+- Muted Gray: #6F6F6F
+
+UI style:
+- rounded cards
+- torn paper panels
+- subtle paper texture
+- soft shadows
+- generous spacing
+- large friendly headings
+- sticker-like decorative assets
+- bottom navigation
+- clear primary action per screen
+
+Avoid:
+- harsh black-heavy UI
+- cold tech dashboard look
+- neon sci-fi visuals
+- dense analytics dashboard layout
+- generic SaaS components
+- casino/gambling visual language
+- overly serious political debate visuals
+
+===============================================================================
+7. CORE UX PRINCIPLES
+===============================================================================
+
+1. Comfort before complexity.
+Every main action should be understandable within 3 seconds.
+
+2. Build a real app, not an art board.
+The UI must be component-based, responsive, and interactive.
+
+3. AI with consent.
+Users must always know when AI is off, listening, thinking, speaking, summarizing, or saving.
+
+4. Safety controls must be visible.
+Users must be able to leave, mute, report, block, and turn off AI.
+
+5. Voice rooms must feel stable.
+Even if the first implementation uses mock state, design the architecture for real WebRTC later.
+
+6. AI must not dominate.
+Default AI mode is Quiet Helper. AI answers only when asked or explicitly triggered.
+
+7. Summaries are optional and deletable.
+Never imply automatic hidden capture.
+
+8. Social-first, debate-second.
+Oppose is about better conversation with friends, not public conflict.
+
+9. Native text only.
+Reference images guide design; coded app should use native text components.
+
+10. Accessibility is not optional.
+Status cannot rely on color alone. Use labels, icons, and semantic roles.
+
+===============================================================================
+8. RECOMMENDED APP ARCHITECTURE
+===============================================================================
+
+Use the existing project stack if already chosen.
+Do not replace the stack without owner approval.
+
+If the repo is not initialized yet, choose a pragmatic mobile-first architecture:
+- Cross-platform mobile app if the founder wants faster delivery
+- Strong native audio support
+- Modular app structure
+- Clear separation between UI, data, services, and domain logic
+
+Recommended frontend modules:
+- App shell
+- Navigation
+- Theme/design tokens
+- Asset registry
+- Auth/onboarding module
+- Profile module
+- Chat module
+- Room module
+- AI module
+- Safety/report module
+- Shared UI components
+- Mock data layer
+- Future API service layer
+
+Recommended folder structure example:
+
+src/
+  app/
+    navigation/
+    providers/
+    routes/
+  assets/
+    images/
+    icons/
+  components/
+    core/
+    layout/
+    cards/
+    buttons/
+    inputs/
+    navigation/
+    stickers/
+  features/
+    onboarding/
+    home/
+    chats/
+    room/
+    ai/
+    profile/
+    safety/
+  services/
+    api/
+    auth/
+    chat/
+    room/
+    ai/
+    moderation/
+    analytics/
+  state/
+    stores/
+    mockData/
+  theme/
+    colors.ts
+    typography.ts
+    spacing.ts
+    shadows.ts
+    radius.ts
+  utils/
+  types/
+
+If using React Native / Expo, adapt names accordingly.
+If using Flutter, adapt to lib/features, lib/widgets, lib/theme, lib/services.
+If using Swift/Kotlin native, adapt to platform conventions while preserving the same domain separation.
+
+===============================================================================
+9. REQUIRED COMPONENT SYSTEM
+===============================================================================
+
+Build reusable components before duplicating page code.
+
+Core components:
+- OpposeScreen
+- OpposeHeader
+- OpposeLogo
+- PaperCard
+- TornPaperCard
+- StickerImage
+- TapeDecoration
+- PrimaryButton
+- SecondaryButton
+- OutlineButton
+- DangerButton
+- TextInput
+- SearchInput
+- SelectableChip
+- SelectableCard
+- StatusPill
+- AIStatusPill
+- Avatar
+- AvatarGroup
+- Badge
+- BottomNavigation
+- EmptyState
+- BottomSheet
+
+Onboarding components:
+- OnboardingHero
+- MascotBlock
+- OnboardingProgress
+- ConsentInfoCard
+- InterestChipGrid
+
+Chat components:
+- ChatListItem
+- ChatBubble
+- AIMessageCard
+- MessageInputBar
+- QuickActionButton
+
+Room components:
+- RoomTypeCard
+- AImodeCard
+- SummaryPrivacyCard
+- RoomParticipantCard
+- SpeakingIndicator
+- RoomControlButton
+- RoomControlBar
+- RoomTopicCard
+- ConnectionStatusPill
+- AIControlDrawer
+
+Safety components:
+- ReportReasonRow
+- BlockToggle
+- SafetyReassuranceCard
+- ReportSubmitButton
+
+Profile components:
+- ProfileHeaderCard
+- StatCard
+- BadgeRow
+- WeeklySummaryChart
+
+Do not create 15 totally separate hardcoded screens.
+Create components that can be reused and connected to real data later.
+
+===============================================================================
+10. DATA MODEL FOR MVP MOCK IMPLEMENTATION
+===============================================================================
+
+Until backend is connected, use typed mock data.
+
+Core mock entities:
+- User
+- Profile
+- Friend
+- Conversation
+- Message
+- Room
+- RoomParticipant
+- AIState
+- RoomSummary
+- ReportReason
+- Badge
+- Notification
+
+Example conceptual fields:
+
+User:
+- id
+- username
+- displayName
+- avatar
+- language
+- interests
+- createdAt
+
+Friend:
+- id
+- displayName
+- username
+- avatar
+- status: online | offline | in_room | typing
+- isBlocked
+
+Conversation:
+- id
+- type: direct | group | room
+- title
+- participants
+- lastMessage
+- unreadCount
+- updatedAt
+
+Message:
+- id
+- conversationId
+- senderId
+- senderType: user | ai | system
+- body
+- createdAt
+- status: sending | sent | delivered | read | failed
+- isAI
+
+Room:
+- id
+- title
+- topic
+- privacy: friends_only | private | public_later
+- status: lobby | live | ended
+- aiMode: off | quiet_helper | brainstormer | translator | moderator_lite
+- summarySetting: off | private_to_me | shared_with_room
+- participants
+
+AIState:
+- mode
+- status: off | not_listening | listening | thinking | speaking | summarizing
+- memoryEnabled
+- canListen
+- consentAccepted
+
+RoomSummary:
+- id
+- roomId
+- title
+- duration
+- generatedByAI
+- visibility
+- takeaways
+- bestArguments
+- funnyMoments
+- openQuestions
+- createdAt
+
+Report:
+- id
+- targetType
+- targetId
+- reason
+- note
+- alsoBlock
+- createdAt
+
+Use these models to avoid random untyped screen state.
+
+===============================================================================
+11. API BOUNDARY DESIGN
+===============================================================================
+
+Even if the first version is frontend-only, prepare service boundaries for future backend.
+
+Create service interfaces or placeholder modules for:
+
+AuthService:
+- signUp()
+- logIn()
+- logOut()
+- getCurrentUser()
+- updateSession()
+
+ProfileService:
+- updateProfile()
+- checkUsername()
+- updateInterests()
+- getProfile()
+
+FriendService:
+- searchFriends()
+- sendFriendRequest()
+- acceptFriendRequest()
+- blockUser()
+- getFriends()
+
+ChatService:
+- getConversations()
+- getMessages()
+- sendMessage()
+- markRead()
+
+RoomService:
+- createRoom()
+- getRoom()
+- joinRoom()
+- leaveRoom()
+- updateRoomSettings()
+- inviteFriends()
+
+AIService:
+- updateConsent()
+- setAIMode()
+- askAI()
+- summarizeRoom()
+- turnOffAI()
+- getMemoryState()
+- deleteSummary()
+
+ModerationService:
+- submitReport()
+- blockUser()
+- muteParticipant()
+- removeParticipant()
+
+NotificationService:
+- getNotifications()
+- markNotificationRead()
+- registerPushToken()
+
+AnalyticsService:
+- track(eventName, properties)
+
+The first implementation can use mock services, but function names and payload shapes should prepare for real APIs.
+
+===============================================================================
+12. ANALYTICS EVENTS TO PREPARE
+===============================================================================
+
+Add analytics hooks as placeholders even if no analytics provider exists yet.
+
+Activation:
+- signup_started
+- signup_completed
+- username_submitted
+- username_available
+- profile_completed
+- interests_selected
+- ai_consent_viewed
+- ai_consent_accepted
+- onboarding_completed
+
+Home:
+- home_viewed
+- daily_debate_agree_clicked
+- daily_debate_oppose_clicked
+- start_room_clicked
+- recent_chat_opened
+
+Chat:
+- chats_viewed
+- chat_opened
+- message_sent
+- ai_suggestion_viewed
+- ask_ai_from_chat_clicked
+- start_room_from_chat_clicked
+
+Room:
+- create_room_viewed
+- room_type_selected
+- ai_mode_selected
+- summary_setting_selected
+- room_created
+- room_lobby_viewed
+- room_joined
+- room_left
+- mute_toggled
+- invite_clicked
+- connection_state_changed
+
+AI:
+- ai_drawer_opened
+- ai_mode_changed
+- ai_asked
+- ai_disabled
+- ai_quick_action_clicked
+- ai_memory_state_viewed
+- summary_generated
+- summary_saved
+- summary_shared
+- summary_deleted
+
+Safety:
+- report_started
+- report_reason_selected
+- report_submitted
+- user_blocked
+- safety_card_viewed
+
+Profile:
+- profile_viewed
+- edit_profile_clicked
+- share_profile_clicked
+- badge_viewed
+
+Analytics should never store sensitive message content or private transcript text by default.
+
+===============================================================================
+13. AI SAFETY AND CONSENT RULES
+===============================================================================
+
+AI must always be permission-based and visible.
+
+Required AI states:
+- AI Off
+- Not listening yet
+- AI Listening
+- AI Thinking
+- AI Speaking
+- Summarizing
+- Memory Off
+
+Required AI controls:
+- Ask AI
+- Turn off AI
+- Change AI settings
+- Choose AI mode
+- Choose summary setting
+- Delete summary
+
+Required copy:
+- “AI only listens when it is turned on.”
+- “You can mute or remove AI anytime.”
+- “Summaries are optional and deletable.”
+- “Generated by AI from allowed room context.”
+- “Memory is off.”
+- “AI will not save this conversation for future chats.”
+
+Never:
+- imply hidden listening
+- show AI as a normal human user
+- save summaries without a visible privacy state
+- hide the AI off button
+- make AI interrupt by default
+- store private transcripts in analytics
+- create long-term memory without explicit user opt-in
+
+AI modes:
+- Off: no AI in room
+- Quiet Helper: responds only when asked
+- Brainstormer: suggests ideas when prompted
+- Translator: translates when requested
+- Moderator-lite: helps keep discussion respectful when selected
+
+Default mode:
+Quiet Helper, or Off if the user has not accepted AI consent.
+
+===============================================================================
+14. SAFETY AND MODERATION RULES
+===============================================================================
+
+Safety is part of the product, not a later add-on.
+
+Required user safety actions:
+- Report
+- Block
+- Mute
+- Leave room
+- Turn off AI
+- Delete summary
+
+Report Flow must include:
+- reason selection
+- optional note
+- also block this user toggle
+- submit report
+- cancel
+- reassurance card
+
+Report reasons:
+- Harassment
+- Spam
+- Unsafe behavior
+- Hate or discrimination
+- Privacy concern
+- Other
+
+Safety UX style:
+- calm
+- clear
+- non-scary
+- respectful
+- easy to use
+- no shame language
+
+Do not use violent, graphic, or frightening illustrations for safety surfaces.
+
+===============================================================================
+15. PAGE IMPLEMENTATION CHECKLIST
+===============================================================================
+
+For each page:
+1. Open the matching image reference.
+2. Identify relevant assets.
+3. Build the screen using native components.
+4. Use illustration PNGs only for non-text visuals.
+5. Keep all UI copy as native text.
+6. Add interactive states.
+7. Add loading/empty/error states where relevant.
+8. Add mock data.
+9. Add analytics hooks.
+10. Add accessibility labels.
+11. Test responsiveness.
+12. Compare with reference image for style.
+13. Avoid pixel-perfect static screenshot copying.
+14. Document known limitations.
+
+===============================================================================
+16. PAGE-BY-PAGE BUILD REQUIREMENTS
+===============================================================================
+
+-------------------------------------------------------------------------------
+16.1 Welcome
+-------------------------------------------------------------------------------
+
+Route suggestion:
+WelcomeScreen
+
+Purpose:
+First impression and entry into onboarding.
+
+Build:
+- Language switch
+- Oppose logo
+- mascot hero
+- value proposition card
+- Start debating button
+- I already have an account button
+- AI trust note
+
+Actions:
+- Start debating -> Sign Up or Username Setup depending flow
+- I already have an account -> Log In
+- Language switch -> toggle local UI language state
+
+States:
+- default
+- loading if auth check exists
+- small device scroll
+
+Assets:
+Use assets from reference context for welcome mascot, stickers, lock badge.
+
+Acceptance criteria:
+- User understands what Oppose is.
+- Primary CTA is visible without confusion.
+- AI trust note is visible.
+- Screen matches warm scrapbook style.
+
+-------------------------------------------------------------------------------
+16.2 Sign Up
+-------------------------------------------------------------------------------
+
+Route suggestion:
+SignUpScreen
+
+Build:
+- email/phone input
+- password input
+- password visibility toggle
+- create account button
+- Google button
+- Apple button
+- terms/privacy text
+- login link
+
+Actions:
+- create account -> validate fields -> mock sign up -> Username Setup
+- Google/Apple -> placeholder handler
+- login -> Log In
+
+States:
+- empty
+- invalid email/phone
+- invalid password
+- loading
+- error
+- success
+
+Acceptance criteria:
+- Form is usable.
+- Text is native.
+- Terms and Privacy links are tappable placeholders.
+- Visual style follows reference.
+
+-------------------------------------------------------------------------------
+16.3 Username Setup
+-------------------------------------------------------------------------------
+
+Route suggestion:
+UsernameSetupScreen
+
+Build:
+- avatar placeholder
+- edit avatar button
+- display name input
+- username input
+- availability status
+- continue button
+
+Actions:
+- input username -> debounce mock availability check
+- continue -> save mock profile -> Interest Setup
+
+States:
+- empty
+- checking username
+- available
+- unavailable
+- invalid characters
+- loading
+- success
+
+Acceptance criteria:
+- User can create social identity.
+- Availability status is clear.
+- Continue disabled until valid.
+
+-------------------------------------------------------------------------------
+16.4 Interest Setup
+-------------------------------------------------------------------------------
+
+Route suggestion:
+InterestSetupScreen
+
+Build:
+- interest chip grid
+- selectable chips
+- continue button
+- skip link
+
+Actions:
+- select/deselect interests
+- continue -> AI Consent Setup
+- skip -> AI Consent Setup
+
+States:
+- none selected
+- selected
+- max selection optional
+- continue active
+
+Acceptance criteria:
+- Chips are accessible and selectable.
+- Selected state uses more than color.
+- User can skip.
+
+-------------------------------------------------------------------------------
+16.5 AI Consent Setup
+-------------------------------------------------------------------------------
+
+Route suggestion:
+AIConsentScreen
+
+Build:
+- explanation cards
+- AI status preview
+- I understand button
+- customize AI settings button
+
+Actions:
+- I understand -> set consent accepted -> Home
+- customize -> AI settings placeholder or modal
+
+States:
+- default
+- accepted
+- customize modal placeholder
+
+Acceptance criteria:
+- User clearly understands AI only listens when turned on.
+- AI off/consent status is explicit.
+- No hidden-listening implication.
+
+-------------------------------------------------------------------------------
+16.6 Home
+-------------------------------------------------------------------------------
+
+Route suggestion:
+HomeScreen
+
+Build:
+- Oppose header
+- greeting
+- Daily Debate card
+- Agree/Oppose buttons
+- Live friends row
+- Recent chats
+- Start a room card
+- Bottom navigation
+
+Actions:
+- Agree/Oppose -> record choice and show selected state
+- friend avatar -> profile placeholder
+- recent chat -> Direct Chat
+- create room -> Create Room
+- bottom nav routes
+
+States:
+- default with data
+- no friends empty state
+- no chats empty state
+- selected debate response
+
+Acceptance criteria:
+- User can reach chat and room creation quickly.
+- Screen feels like daily habit dashboard.
+- Bottom navigation works.
+
+-------------------------------------------------------------------------------
+16.7 Chats List
+-------------------------------------------------------------------------------
+
+Route suggestion:
+ChatsListScreen
+
+Build:
+- title
+- search input
+- chat list
+- unread badges
+- floating new chat button
+- bottom navigation
+
+Actions:
+- search filters mock conversations
+- tap chat -> Direct Chat
+- new chat -> placeholder create group
+
+States:
+- default
+- search results
+- empty search
+- no chats
+
+Acceptance criteria:
+- Chat cells are native and dynamic.
+- Unread states are visible.
+- Search works on mock data.
+
+-------------------------------------------------------------------------------
+16.8 Direct Chat
+-------------------------------------------------------------------------------
+
+Route suggestion:
+DirectChatScreen
+
+Build:
+- header with avatar/name/status
+- call icon
+- message list
+- incoming/outgoing bubbles
+- AI helper suggestion card
+- Ask AI and Start room quick actions
+- input bar
+- send button
+
+Actions:
+- send message -> append mock message
+- Ask AI -> append AI mock response or open AI action
+- Start room -> Create Room or Room Lobby
+- call -> Room Lobby
+
+States:
+- default
+- typing text
+- sending
+- failed send placeholder
+- AI suggestion visible
+
+Acceptance criteria:
+- AI message is clearly labeled.
+- User can send a mock message.
+- Start room path exists.
+
+-------------------------------------------------------------------------------
+16.9 Create Room
+-------------------------------------------------------------------------------
+
+Route suggestion:
+CreateRoomScreen
+
+Build:
+- room topic input
+- room type cards
+- invite friend avatars
+- add more
+- AI mode selector
+- summary setting selector
+- start room button
+
+Actions:
+- select room type
+- select invitees
+- select AI mode
+- select summary setting
+- start room -> Room Lobby
+
+States:
+- no topic
+- selected type
+- selected AI mode
+- selected summary setting
+- loading create room
+
+Acceptance criteria:
+- Room creation choices are explicit.
+- AI mode and summary privacy are visible.
+- Start room creates mock room state.
+
+-------------------------------------------------------------------------------
+16.10 Room Lobby
+-------------------------------------------------------------------------------
+
+Route suggestion:
+RoomLobbyScreen
+
+Build:
+- title/subtitle
+- friend preview
+- invite more
+- mic test card
+- audio route dropdown placeholder
+- AI status card
+- room rule card
+- join room button
+- invite friends button
+- change AI settings link
+
+Actions:
+- join room -> Live Voice Room
+- invite friends -> mock friend picker/modal
+- change AI settings -> AI mode selector/modal
+
+States:
+- mic ready
+- mic permission denied
+- AI not listening yet
+- invite modal
+
+Acceptance criteria:
+- User knows mic and AI state before joining.
+- Join room is primary.
+- AI not listening yet is visible.
+
+-------------------------------------------------------------------------------
+16.11 Live Voice Room
+-------------------------------------------------------------------------------
+
+Route suggestion:
+LiveVoiceRoomScreen
+
+Build:
+- room title
+- privacy pill
+- AI status pill
+- participant grid
+- speaking indicator
+- topic card
+- connection status
+- bottom controls:
+  Mute, Chat, Ask AI, Invite, Leave
+
+Actions:
+- mute toggles local mic state
+- chat opens room chat drawer/modal
+- ask AI opens AI Drawer
+- invite opens invite modal
+- leave opens confirm or returns Home/Room Summary
+
+States:
+- speaking participant
+- muted self
+- AI listening
+- AI off
+- stable connection
+- reconnecting
+- poor connection
+- leave confirmation
+
+Acceptance criteria:
+- Leave is always visible.
+- Mute state is obvious.
+- AI user is distinct.
+- Speaking state is visible.
+- Ask AI opens bottom sheet.
+
+-------------------------------------------------------------------------------
+16.12 AI Drawer
+-------------------------------------------------------------------------------
+
+Route suggestion:
+AIControlDrawer component or AIDrawerScreen
+
+Build:
+- bottom sheet overlay
+- AI helper header
+- AI status pill
+- mode selector
+- quick actions
+- memory section
+- turn off AI button
+- ask AI button
+- prompt input
+
+Actions:
+- select mode
+- quick action -> mock AI response/action
+- turn off AI -> set AI off
+- ask AI -> send mock request
+
+States:
+- listening
+- thinking
+- off
+- memory off
+- input empty
+- input filled
+
+Acceptance criteria:
+- AI control is transparent.
+- Turn off AI is visible.
+- Memory off is explicit.
+- Drawer does not hide critical room state entirely.
+
+-------------------------------------------------------------------------------
+16.13 Room Summary
+-------------------------------------------------------------------------------
+
+Route suggestion:
+RoomSummaryScreen
+
+Build:
+- title/subtitle
+- AI-generated label
+- summary sections
+- privacy card
+- Save button
+- Share with room button
+- Delete summary button
+
+Actions:
+- save -> saved state
+- share -> mock shared state
+- delete -> confirm -> remove/return Home
+
+States:
+- default
+- saved
+- shared
+- delete confirm
+- empty/no summary error
+
+Acceptance criteria:
+- AI-generated label is visible.
+- Privacy state is visible.
+- Delete summary works.
+- Summary content is native text.
+
+-------------------------------------------------------------------------------
+16.14 My Profile
+-------------------------------------------------------------------------------
+
+Route suggestion:
+MyProfileScreen
+
+Build:
+- header
+- notification icon
+- profile avatar
+- name/username/bio
+- stats
+- badges
+- weekly summary chart
+- edit profile button
+- share profile button
+- bottom navigation
+
+Actions:
+- edit profile -> placeholder edit modal/screen
+- share profile -> mock share
+- badges -> badge detail placeholder
+
+States:
+- default
+- no badges
+- loading profile placeholder
+
+Acceptance criteria:
+- Profile feels warm and social.
+- Badges reward respectful behavior.
+- Chart is native or component-based, not screenshot.
+
+-------------------------------------------------------------------------------
+16.15 Report Flow
+-------------------------------------------------------------------------------
+
+Route suggestion:
+ReportFlowScreen
+
+Build:
+- back button
+- title/subtitle
+- reason rows
+- optional note field
+- also block toggle
+- submit report button
+- cancel button
+- safety reassurance card
+
+Actions:
+- select reason
+- type note
+- toggle block
+- submit -> mock moderation service -> confirmation
+- cancel -> previous screen
+
+States:
+- no reason selected
+- reason selected
+- note typed
+- submitting
+- submitted
+- error
+
+Acceptance criteria:
+- Submit disabled or validates until reason selected.
+- Also block state is clear.
+- Confirmation appears after submission.
+- User can cancel safely.
+
+===============================================================================
+17. COMPLETE OPPOSE SPRINT PLAN
+===============================================================================
+
+This sprint plan is Oppose-specific.
+It converts the broader master plan into a build sequence for the Oppose app.
+
+Assumption:
+Two-week sprints, but an AI coding agent may execute faster.
+Do not skip dependency order.
+
+-------------------------------------------------------------------------------
+SPRINT 0 — Repository Understanding and Product Alignment
+-------------------------------------------------------------------------------
+
+Theme:
+Pre-production and context alignment.
+
+Agent goals:
+- Read all relevant docs.
+- Inspect existing repo.
+- Identify stack.
+- Identify current state.
+- Create implementation plan.
+- Do not rewrite the project blindly.
+
+Tasks:
+1. Inspect:
+   - startup/docs
+   - Oppose/docs/AI_AGENT_REFERENCE_CONTEXT.txt
+   - Oppose/docs/refrences/pages
+   - Oppose/docs/refrences/assets
+2. Inspect package files and existing app structure.
+3. Identify framework, language, routing, styling, state management.
+4. Identify missing dependencies.
+5. Create/update README or implementation note if needed.
+6. Map each reference page to route/component.
+7. Map assets to app asset registry.
+8. Create initial backlog from this sprint plan.
+
+Deliverables:
+- Repo understanding summary.
+- Build plan.
+- Screen route map.
+- Asset inventory plan.
+- Initial component architecture proposal.
+
+Exit criteria:
+- Agent knows what exists and what must be built.
+- No code architecture decision is made blindly.
+- Sprint 1 tasks are clear.
+
+-------------------------------------------------------------------------------
+SPRINT 1 — App Foundation, Theme, Navigation, Asset System
+-------------------------------------------------------------------------------
+
+Theme:
+Build the base app shell and visual system.
+
+Tasks:
+1. Create or clean app navigation structure.
+2. Add route constants for all MVP screens.
+3. Implement theme tokens:
+   - colors
+   - typography
+   - spacing
+   - radius
+   - shadows
+4. Create asset registry/helper.
+5. Add safe-area screen wrapper.
+6. Build shared layout components:
+   - OpposeScreen
+   - PaperCard
+   - StickerImage
+   - PrimaryButton
+   - SecondaryButton
+   - OutlineButton
+   - TextInput
+   - SearchInput
+   - StatusPill
+   - AIStatusPill
+7. Build BottomNavigation component.
+8. Add mock data folder.
+9. Add placeholder AnalyticsService.
+10. Add placeholder service interfaces.
+
+Screens to stub:
+- Welcome
+- Sign Up
+- Username Setup
+- Interest Setup
+- AI Consent Setup
+- Home
+- Chats List
+- Direct Chat
+- Create Room
+- Room Lobby
+- Live Voice Room
+- Room Summary
+- My Profile
+- Report Flow
+
+Deliverables:
+- App runs.
+- Navigation works between stub screens.
+- Theme tokens exist.
+- Core components exist.
+- Assets can be loaded.
+
+Exit criteria:
+- User can open app.
+- Developer can navigate to each MVP screen.
+- No page is still completely missing.
+- Visual foundation follows Oppose style.
+
+-------------------------------------------------------------------------------
+SPRINT 2 — Onboarding Flow
+-------------------------------------------------------------------------------
+
+Theme:
+Build first-time user journey.
+
+Screens:
+- Welcome
+- Sign Up
+- Username Setup
+- Interest Setup
+- AI Consent Setup
+
+Tasks:
+1. Implement Welcome screen from reference.
+2. Implement Sign Up screen with validation.
+3. Implement Username Setup with mock availability check.
+4. Implement Interest Setup with selectable chips.
+5. Implement AI Consent Setup with consent state.
+6. Create onboarding state store.
+7. Add navigation through onboarding.
+8. Add analytics hooks.
+9. Add loading/error states.
+10. Add accessibility labels.
+
+Mock data/state:
+- currentUser
+- profileDraft
+- selectedInterests
+- aiConsentAccepted
+
+Deliverables:
+- Complete onboarding flow.
+- Mock user can reach Home.
+- Consent state persists locally or in mock store.
+
+Exit criteria:
+- New user can move from Welcome to Home.
+- Inputs validate correctly.
+- AI consent is explicit.
+- References are visually matched without using screenshots as UI.
+
+-------------------------------------------------------------------------------
+SPRINT 3 — Home and Main Navigation
+-------------------------------------------------------------------------------
+
+Theme:
+Build daily dashboard and app shell.
+
+Screens:
+- Home
+- Bottom navigation
+- main app structure
+
+Tasks:
+1. Implement Home screen.
+2. Add Daily Debate card.
+3. Add Agree/Oppose selected state.
+4. Add Live Friends row.
+5. Add Recent Chats section.
+6. Add Start a Room card.
+7. Wire Home navigation:
+   - chat item -> Direct Chat
+   - create room -> Create Room
+   - profile tab -> My Profile
+   - chats tab -> Chats List
+8. Add mock data for friends/chats/debate.
+9. Add empty states for no friends/no chats.
+10. Add analytics hooks.
+
+Deliverables:
+- Functional Home screen.
+- Main app navigation works.
+- Mock daily debate interaction works.
+
+Exit criteria:
+- Home feels like a daily-use social app.
+- User can reach chat and room creation quickly.
+- Bottom navigation is stable.
+
+-------------------------------------------------------------------------------
+SPRINT 4 — Messaging MVP
+-------------------------------------------------------------------------------
+
+Theme:
+Build chat list and direct chat.
+
+Screens:
+- Chats List
+- Direct Chat
+
+Tasks:
+1. Implement Chats List with mock conversations.
+2. Implement search/filter.
+3. Implement unread badges.
+4. Implement floating new chat placeholder.
+5. Implement Direct Chat.
+6. Implement chat bubbles.
+7. Implement AI helper message card.
+8. Implement message input.
+9. Implement local send message behavior.
+10. Add Ask AI quick action placeholder.
+11. Add Start Room from chat.
+12. Add failed send placeholder state if possible.
+13. Add analytics hooks.
+
+Mock data:
+- conversations
+- messages
+- participants
+- unread counts
+
+Deliverables:
+- User can open chat.
+- User can send local mock message.
+- User can start room from chat.
+- AI suggestion is visually distinct.
+
+Exit criteria:
+- Chat is usable and not static.
+- AI messages are labeled.
+- Chat screen follows reference layout.
+
+-------------------------------------------------------------------------------
+SPRINT 5 — Create Room and Room Lobby
+-------------------------------------------------------------------------------
+
+Theme:
+Build room setup flow.
+
+Screens:
+- Create Room
+- Room Lobby
+
+Tasks:
+1. Implement Create Room screen.
+2. Add room topic input.
+3. Add room type selector.
+4. Add invite friend selector/row.
+5. Add AI mode selector.
+6. Add summary privacy selector.
+7. Implement Start Room behavior.
+8. Create mock room state.
+9. Implement Room Lobby.
+10. Add mic test card with mock states.
+11. Add AI status card.
+12. Add room rule card.
+13. Add Join Room button.
+14. Add Change AI Settings placeholder.
+15. Add analytics hooks.
+
+Mock data:
+- selected room type
+- invited friends
+- selected AI mode
+- selected summary setting
+- mic permission state
+
+Deliverables:
+- User can create a mock room.
+- User can enter lobby.
+- Room configuration carries into lobby.
+
+Exit criteria:
+- AI and summary settings are visible before room starts.
+- User understands mic and AI status before joining.
+- Join room path is ready.
+
+-------------------------------------------------------------------------------
+SPRINT 6 — Live Voice Room UI Alpha
+-------------------------------------------------------------------------------
+
+Theme:
+Build live room interface with mock realtime state.
+
+Screens:
+- Live Voice Room
+- Room chat placeholder if needed
+- invite modal placeholder
+
+Tasks:
+1. Implement Live Voice Room screen.
+2. Add participant grid.
+3. Add speaking indicator.
+4. Add mic/mute state.
+5. Add AI status pill.
+6. Add privacy pill.
+7. Add topic card.
+8. Add connection status pill.
+9. Add bottom control bar.
+10. Implement Mute toggle.
+11. Implement Chat drawer placeholder.
+12. Implement Invite modal placeholder.
+13. Implement Leave action.
+14. Add reconnecting/poor connection states.
+15. Add analytics hooks.
+
+Mock states:
+- activeSpeakerId
+- isMuted
+- aiStatus
+- connectionStatus
+- participant states
+
+Deliverables:
+- Live room screen works as mock.
+- User can toggle mute.
+- User can open AI Drawer in Sprint 7.
+- User can leave.
+
+Exit criteria:
+- Live room is visually clear.
+- Leave is always visible.
+- AI participant is distinct.
+- Speaking state is obvious.
+
+-------------------------------------------------------------------------------
+SPRINT 7 — AI Drawer and AI Interaction Alpha
+-------------------------------------------------------------------------------
+
+Theme:
+Add controllable AI behavior.
+
+Screens/components:
+- AI Drawer
+- AIStatusPill
+- AI quick actions
+- AI mock service
+
+Tasks:
+1. Implement AI Drawer as bottom sheet.
+2. Add mode selector.
+3. Add quick actions.
+4. Add memory off section.
+5. Add Turn off AI button.
+6. Add Ask AI input.
+7. Add mock AIService.
+8. Add AI status transitions:
+   - listening
+   - thinking
+   - speaking
+   - off
+9. Connect Ask AI from Live Voice Room.
+10. Connect Ask AI from Direct Chat if possible.
+11. Add analytics hooks.
+12. Add consent guard:
+   if consent not accepted, show safe prompt instead of AI action.
+
+Deliverables:
+- User can open AI Drawer.
+- User can change AI mode.
+- User can turn AI off.
+- User can trigger mock AI response/action.
+
+Exit criteria:
+- AI control is transparent.
+- AI off is easy.
+- Memory off is visible.
+- No hidden-listening implication exists.
+
+Milestone:
+Prototype Gate.
+Internal user can enter a room and ask AI with visible AI status and safety controls.
+
+-------------------------------------------------------------------------------
+SPRINT 8 — Room Summary and Notifications Placeholder
+-------------------------------------------------------------------------------
+
+Theme:
+Complete conversation loop after room ends.
+
+Screens:
+- Room Summary
+- notification placeholder if included
+
+Tasks:
+1. Implement Room Summary screen.
+2. Generate mock summary from room data.
+3. Add summary sections:
+   - Main takeaways
+   - Best arguments
+   - Funny moments
+   - Open questions
+4. Add AI-generated label.
+5. Add privacy card.
+6. Add Save state.
+7. Add Share with room placeholder.
+8. Add Delete summary with confirmation.
+9. Add summary navigation after leaving room.
+10. Add basic notification placeholder model:
+   - summary ready
+   - room invite
+   - friend request
+11. Add analytics hooks.
+
+Deliverables:
+- Leaving a room can lead to summary.
+- User can save/share/delete summary.
+- Summary is clearly AI-generated and private by default.
+
+Exit criteria:
+- Summary feels useful, not creepy.
+- Delete summary works.
+- Privacy state is visible.
+
+-------------------------------------------------------------------------------
+SPRINT 9 — Profile and Safety
+-------------------------------------------------------------------------------
+
+Theme:
+Build identity and report flow.
+
+Screens:
+- My Profile
+- Report Flow
+- safety modals/placeholders
+
+Tasks:
+1. Implement My Profile screen.
+2. Add profile stats.
+3. Add badges.
+4. Add weekly summary chart.
+5. Add Edit profile placeholder.
+6. Add Share profile placeholder.
+7. Implement Report Flow.
+8. Add report reason selection.
+9. Add optional note.
+10. Add block toggle.
+11. Add submit report mock service.
+12. Add submitted confirmation.
+13. Add cancel/back behavior.
+14. Add analytics hooks.
+15. Add accessibility labels.
+
+Deliverables:
+- Profile screen complete.
+- Report flow complete.
+- Mock report submission works.
+- Optional block toggle works locally.
+
+Exit criteria:
+- User can protect themselves.
+- Safety UX is calm and clear.
+- Profile supports identity and future stats.
+
+Milestone:
+Closed Alpha Gate for frontend prototype.
+Core onboarding, home, chat, room, AI, summary, profile, and report flows exist with mock data.
+
+-------------------------------------------------------------------------------
+SPRINT 10 — Polish, QA, Responsive Pass, Closed Beta Readiness
+-------------------------------------------------------------------------------
+
+Theme:
+Make the Oppose MVP feel coherent and testable.
+
+Tasks:
+1. Compare every screen to its reference image.
+2. Fix spacing and hierarchy.
+3. Optimize assets.
+4. Add loading states.
+5. Add empty states.
+6. Add error states.
+7. Add disabled button states.
+8. Add small-device scroll behavior.
+9. Add safe-area handling.
+10. Add accessibility labels.
+11. Add unit/component tests where project supports it.
+12. Add screen smoke tests where possible.
+13. Add QA checklist.
+14. Add README usage instructions.
+15. Ensure no screenshot-based UI implementation.
+16. Ensure no hidden AI behavior.
+17. Ensure no gambling or cash reward language.
+18. Ensure no broken navigation path.
+
+Deliverables:
+- Closed beta quality frontend MVP.
+- QA checklist.
+- Known limitations list.
+- Next backend integration plan.
+
+Exit criteria:
+- All 15 reference screens implemented.
+- App is navigable end to end.
+- User can complete the main loop:
+  Welcome -> Sign Up -> Username -> Interests -> AI Consent -> Home -> Chat -> Create Room -> Lobby -> Live Room -> AI Drawer -> Leave -> Summary -> Profile/Report
+- App is ready for backend integration and alpha testing.
+
+Milestone:
+Oppose Closed Beta UI Gate.
+
+-------------------------------------------------------------------------------
+SPRINT 11 — Backend Integration Preparation
+-------------------------------------------------------------------------------
+
+Theme:
+Prepare real services without breaking frontend.
+
+Tasks:
+1. Replace mock services with API-compatible interfaces if not already done.
+2. Define request/response DTOs.
+3. Add environment config.
+4. Add API client.
+5. Add auth token storage placeholder.
+6. Add error normalization.
+7. Add retry strategy for safe operations.
+8. Add offline/failed-send handling plan.
+9. Add backend integration TODOs per screen.
+10. Document all endpoints needed.
+
+Deliverables:
+- API client layer.
+- Typed service interfaces.
+- Backend endpoint contract draft.
+
+Exit criteria:
+- Frontend can switch from mock to real service later.
+- No screen directly owns backend logic.
+- All services have clear boundaries.
+
+-------------------------------------------------------------------------------
+SPRINT 12 — Real Auth and Profile Integration
+-------------------------------------------------------------------------------
+
+Theme:
+Connect account and identity to backend when available.
+
+Tasks:
+1. Connect sign up/login.
+2. Connect session handling.
+3. Connect username availability.
+4. Connect profile creation.
+5. Connect interests save.
+6. Connect AI consent save.
+7. Add account recovery placeholder if needed.
+8. Add secure token storage.
+9. Add logout.
+10. Add auth error states.
+
+Deliverables:
+- Real or staging auth flow.
+- Profile persistence.
+- Consent persistence.
+
+Exit criteria:
+- User can create account and return later.
+- AI consent is stored.
+- Username validation is real.
+
+-------------------------------------------------------------------------------
+SPRINT 13 — Messaging and Friends Integration
+-------------------------------------------------------------------------------
+
+Theme:
+Connect real social graph and chat.
+
+Tasks:
+1. Connect friends service.
+2. Connect chat list.
+3. Connect direct messages.
+4. Connect send message.
+5. Add message status.
+6. Add unread states.
+7. Add basic group chat support if backend ready.
+8. Add block behavior.
+9. Add report message placeholder.
+10. Add realtime messaging if available.
+
+Deliverables:
+- Real conversations.
+- Real message send/receive.
+- Friend-aware navigation.
+
+Exit criteria:
+- Two test users can chat.
+- Blocked users are handled safely.
+- Chat to room path still works.
+
+-------------------------------------------------------------------------------
+SPRINT 14 — Room Service and Realtime Voice Integration
+-------------------------------------------------------------------------------
+
+Theme:
+Connect room lifecycle and voice infrastructure.
+
+Tasks:
+1. Connect create room endpoint.
+2. Connect join room endpoint.
+3. Connect leave room endpoint.
+4. Connect room participant state.
+5. Connect presence service if available.
+6. Integrate WebRTC/SFU provider.
+7. Add microphone permission handling.
+8. Add reconnect state.
+9. Add speaking detection.
+10. Add mute/unmute real behavior.
+11. Add room invite behavior.
+12. Add room chat if available.
+13. Add voice QA logging.
+
+Deliverables:
+- Real room lifecycle.
+- Real audio prototype.
+- Real participant states.
+
+Exit criteria:
+- Two to four test users can talk in a room.
+- Mute and leave work.
+- Reconnect state is visible.
+- Room does not hide AI/safety controls.
+
+-------------------------------------------------------------------------------
+SPRINT 15 — AI Service Integration
+-------------------------------------------------------------------------------
+
+Theme:
+Connect AI helper with consent boundaries.
+
+Tasks:
+1. Connect AI ask endpoint.
+2. Connect AI status transitions.
+3. Connect AI mode setting.
+4. Connect AI off control.
+5. Connect room context policy.
+6. Connect summary generation.
+7. Add AI timeout and fallback states.
+8. Add AI safety error states.
+9. Add AI cost/latency analytics hooks.
+10. Ensure no transcript content goes to analytics by default.
+
+Deliverables:
+- Real AI ask flow.
+- Real or staging summary generation.
+- AI consent enforcement.
+
+Exit criteria:
+- User can ask AI in room/chat.
+- AI only works when consent/settings allow.
+- User can turn AI off.
+- AI failures are handled gracefully.
+
+-------------------------------------------------------------------------------
+SPRINT 16 — Moderation, Reporting, Notifications, Hardening
+-------------------------------------------------------------------------------
+
+Theme:
+Prepare for real closed alpha.
+
+Tasks:
+1. Connect report submission.
+2. Connect block user.
+3. Connect moderation metadata.
+4. Add notification center if in scope.
+5. Add push token registration if available.
+6. Add room invite notification.
+7. Add summary-ready notification.
+8. Add crash reporting.
+9. Add error monitoring.
+10. Add QA regression checklist.
+11. Add basic admin dependency notes if admin app is separate.
+
+Deliverables:
+- Safety flow connected.
+- Notifications prepared or connected.
+- Monitoring hooks added.
+
+Exit criteria:
+- Reports enter backend/moderation path.
+- Users can block.
+- Critical errors are observable.
+- Closed alpha can run with safety visibility.
+
+-------------------------------------------------------------------------------
+SPRINT 17 — Public Beta Readiness
+-------------------------------------------------------------------------------
+
+Theme:
+Production readiness review.
+
+Tasks:
+1. Full UI QA.
+2. Full flow QA.
+3. App performance pass.
+4. Asset optimization.
+5. Accessibility pass.
+6. Privacy copy review.
+7. AI consent review.
+8. App store metadata draft if needed.
+9. Crash/error monitoring verification.
+10. Analytics dashboard event verification.
+11. Security review checklist.
+12. Remove debug-only user-facing artifacts.
+13. Confirm no gambling/cash-out mechanics.
+14. Confirm all user safety exits.
+
+Deliverables:
+- Public beta readiness checklist.
+- Release candidate build.
+- Known risk list.
+- Launch blockers list.
+
+Exit criteria:
+- Product is safe enough for controlled public beta.
+- Core loop is stable.
+- Monitoring and support paths exist.
+
+-------------------------------------------------------------------------------
+SPRINT 18 — Public Launch Stabilization
+-------------------------------------------------------------------------------
+
+Theme:
+Stabilize, measure, and prepare growth.
+
+Tasks:
+1. Fix beta bugs.
+2. Improve onboarding drop-off points.
+3. Improve room creation clarity.
+4. Improve AI usefulness copy.
+5. Improve notification quality.
+6. Review analytics.
+7. Tune performance.
+8. Tune image sizes.
+9. Improve error handling.
+10. Document production operations.
+11. Final app store readiness.
+12. Launch runbook.
+
+Deliverables:
+- Launch-ready Oppose app.
+- Production runbook.
+- Stabilized MVP.
+- Backlog for post-launch improvements.
+
+Exit criteria:
+- Public launch gate passed.
+- Core metrics are measurable.
+- Product can handle real users with support and safety processes.
+
+===============================================================================
+18. DEFINITION OF DONE
+===============================================================================
+
+A feature is done only when:
+
+Product:
+- It matches the intended user flow.
+- It solves the user need.
+- It does not add uncontrolled scope.
+
+Design:
+- It follows Oppose visual identity.
+- It uses reference pages correctly.
+- It does not use screenshots as UI.
+- It handles empty/loading/error states.
+
+Frontend:
+- It is component-based.
+- It is responsive.
+- It uses native text.
+- It has accessible controls.
+- It handles local/mock state.
+- It can later connect to service layer.
+
+Backend-ready:
+- It has clear service boundaries.
+- It avoids hardcoded data in screen components where possible.
+- It uses typed models/payloads.
+
+AI:
+- It respects consent.
+- It shows AI status.
+- It includes AI off control.
+- It does not imply hidden listening.
+
+Safety:
+- Report/block/leave/mute are reachable where relevant.
+- Report flow validates inputs.
+- Dangerous actions have clear confirmation where needed.
+
+QA:
+- Main flow tested.
+- Edge states tested.
+- Small screen tested.
+- Navigation tested.
+- No broken routes.
+
+===============================================================================
+19. AGENT WORKFLOW RULES
+===============================================================================
+
+Before each sprint:
+1. Read sprint goal.
+2. Inspect existing implementation.
+3. Identify missing pieces.
+4. Plan file changes.
+5. Implement incrementally.
+6. Avoid rewriting unrelated code.
+7. Keep components reusable.
+
+During implementation:
+- Prefer small, coherent commits/changes.
+- Keep naming consistent.
+- Do not create duplicate components unnecessarily.
+- Do not hardcode all screen data inside JSX/widgets.
+- Use typed mock data.
+- Keep visual constants in theme files.
+- Keep service calls outside UI where possible.
+- Add comments only where helpful.
+
+After each sprint:
+Return a sprint report with:
+- What was built
+- Files changed
+- How to test
+- Known limitations
+- Next sprint recommendation
+- Any blockers
+- Any deviations from plan
+
+If blocked:
+- Explain the blocker.
+- Make the safest partial implementation.
+- Leave clear TODOs.
+- Do not invent risky architecture to bypass missing information.
+
+===============================================================================
+20. QUALITY BAR
+===============================================================================
+
+The app should feel:
+- complete enough to demo
+- clean enough for founder review
+- structured enough for future developers
+- visually close to the references
+- safe enough for early users
+- flexible enough for backend integration
+
+The app should not feel:
+- like screenshots inside a shell
+- like a generic template
+- like a rushed hackathon prototype
+- like a gambling app
+- like AI is spying on users
+- like a static Figma export
+
+===============================================================================
+21. FINAL BUILD PROMPT FOR AI CODING AGENT
+===============================================================================
+
+Use this prompt when starting a new coding session:
+
+You are building the Oppose mobile app inside this repository.
+
+First, read and understand:
+1. C:\Users\GabrielBatavia\Documents\github_project\startup\docs
+2. C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\AI_AGENT_REFERENCE_CONTEXT.txt
+3. C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\OPPOSE_AI_AGENT_BUILD_GUIDE_AND_SPRINT_PLAN.txt
+4. C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\pages
+5. C:\Users\GabrielBatavia\Documents\github_project\startup\Oppose\docs\refrences\assets
+
+Then inspect the existing project structure and identify the current framework, routing system, styling approach, and available assets.
+
+Build Oppose according to the sprint plan in OPPOSE_AI_AGENT_BUILD_GUIDE_AND_SPRINT_PLAN.txt.
+
+Start with Sprint 0 and Sprint 1 unless they are already complete.
+
+Do not build Clash features.
+Do not build gambling, cash-out, betting, odds, crypto, or transferable coin mechanics.
+Do not use reference pages as full-screen image backgrounds.
+Do not bake important UI text into images.
+Use real native/components for UI.
+Use reference assets only as illustration and decorative assets.
+Respect AI consent, AI visibility, memory-off state, summary deletion, report/block safety, and visible leave/mute controls.
+
+After each sprint or implementation batch, report:
+- completed work
+- changed files
+- how to run/test
+- known limitations
+- next steps
+
+Primary product feeling:
+Oppose should feel warm, handmade, social, respectful, friendly, and safe.
+
+Core line:
+Different take, better talk.
+
+===============================================================================
+22. FINAL PRODUCT DOCTRINE
+===============================================================================
+
+Build one room that feels alive, safe, useful, and repeatable.
+
+Then make that room social.
+
+Then make AI helpful without taking control.
+
+Then make summaries useful without feeling creepy.
+
+Then make safety visible without making the app feel scary.
+
+That is the correct Oppose MVP.
+
+The goal is not to build every future feature.
+The goal is to build the first real daily loop:
+Sign up -> create identity -> enter home -> chat -> create room -> join room -> ask AI -> leave -> summary -> return.
+
+If that loop feels good, Oppose has a foundation.

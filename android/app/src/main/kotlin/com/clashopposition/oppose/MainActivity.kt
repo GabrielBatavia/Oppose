@@ -1,0 +1,5 @@
+package com.clashopposition.oppose
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
