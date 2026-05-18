@@ -60,6 +60,66 @@ void main() {
     await tapVisibleText(tester, 'Profile');
     expect(find.text('Your respectful debate identity.'), findsOneWidget);
   });
+
+  testWidgets('chats list renders and search filters conversations', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Chats');
+
+    expect(find.text('Maya'), findsOneWidget);
+    expect(find.text('Study Room'), findsOneWidget);
+
+    await tester.enterText(find.byType(EditableText).last, 'study');
+    await tester.pumpAndSettle();
+    expect(find.text('Study Room'), findsOneWidget);
+    expect(find.text('Maya'), findsNothing);
+
+    await tester.enterText(find.byType(EditableText).last, 'zzzz');
+    await tester.pumpAndSettle();
+    expect(find.text('No matching chats'), findsOneWidget);
+  });
+
+  testWidgets('direct chat sends message and asks AI', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Chats');
+    await tapVisibleText(tester, 'Maya');
+
+    expect(
+      find.text(
+        'AI responds only when asked. It is not listening in this chat.',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byType(EditableText).last,
+      'Let us compare both sides.',
+    );
+    await tapVisibleFinder(tester, find.byTooltip('Send message'));
+    expect(find.text('Let us compare both sides.'), findsOneWidget);
+
+    await tapVisibleFinder(tester, find.text('Ask AI').first);
+    expect(
+      find.textContaining('What is one strong reason for each side'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('direct chat start room routes to create room', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Chats');
+    await tapVisibleText(tester, 'Maya');
+
+    await tapVisibleFinder(tester, find.text('Start room').last);
+    expect(find.text('Create a room'), findsOneWidget);
+  });
 }
 
 Future<void> completeOnboarding(
