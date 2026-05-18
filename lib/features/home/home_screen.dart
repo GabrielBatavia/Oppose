@@ -11,6 +11,7 @@ import '../../components/layout/oppose_screen.dart';
 import '../../components/stickers/sticker_image.dart';
 import '../../services/analytics/analytics_service.dart';
 import '../../state/home/home_controller.dart';
+import '../../state/messaging/messaging_scope.dart';
 import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import 'widgets/daily_debate_card.dart';
@@ -136,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
               conversation: conversation,
               onTap: () {
                 _controller.openRecentChat(conversation);
+                MessagingScope.read(context).openConversation(conversation.id);
                 context.go(AppRoutes.directChat);
               },
             ),
