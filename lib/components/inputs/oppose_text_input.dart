@@ -10,6 +10,12 @@ class OpposeTextInput extends StatelessWidget {
     this.obscureText = false,
     this.maxLines = 1,
     this.suffixIcon,
+    this.prefixIcon,
+    this.errorText,
+    this.helperText,
+    this.textInputAction,
+    this.textCapitalization = TextCapitalization.none,
+    this.enabled = true,
     this.onChanged,
   });
 
@@ -20,6 +26,12 @@ class OpposeTextInput extends StatelessWidget {
   final bool obscureText;
   final int maxLines;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? errorText;
+  final String? helperText;
+  final TextInputAction? textInputAction;
+  final TextCapitalization textCapitalization;
+  final bool enabled;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -29,10 +41,16 @@ class OpposeTextInput extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       maxLines: maxLines,
+      enabled: enabled,
+      textInputAction: textInputAction,
+      textCapitalization: textCapitalization,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
+        errorText: errorText,
+        helperText: helperText,
+        prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
       ),
     );
