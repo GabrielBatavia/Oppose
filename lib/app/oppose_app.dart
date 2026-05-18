@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'navigation/app_router.dart';
 import '../services/analytics/analytics_service.dart';
@@ -15,6 +16,7 @@ class OpposeApp extends StatefulWidget {
 
 class _OpposeAppState extends State<OpposeApp> {
   late final OnboardingController _onboardingController;
+  late final GoRouter _router;
 
   @override
   void initState() {
@@ -22,10 +24,12 @@ class _OpposeAppState extends State<OpposeApp> {
     _onboardingController = OnboardingController(
       analytics: const NoopAnalyticsService(),
     );
+    _router = createAppRouter();
   }
 
   @override
   void dispose() {
+    _router.dispose();
     _onboardingController.dispose();
     super.dispose();
   }
@@ -38,7 +42,7 @@ class _OpposeAppState extends State<OpposeApp> {
         title: 'Oppose',
         debugShowCheckedModeBanner: false,
         theme: OpposeTheme.light,
-        routerConfig: appRouter,
+        routerConfig: _router,
       ),
     );
   }

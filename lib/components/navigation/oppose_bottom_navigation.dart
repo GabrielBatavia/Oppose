@@ -11,17 +11,23 @@ class OpposeBottomNavigation extends StatelessWidget {
     final location = GoRouterState.of(context).uri.path;
     final selectedIndex = _selectedIndex(location);
 
-    return NavigationBar(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: (index) => context.go(_destinations[index].route),
-      destinations: [
-        for (final destination in _destinations)
-          NavigationDestination(
-            icon: Icon(destination.icon),
-            selectedIcon: Icon(destination.selectedIcon),
-            label: destination.label,
-          ),
-      ],
+    return Semantics(
+      label: 'Oppose main navigation',
+      child: NavigationBar(
+        height: 74,
+        selectedIndex: selectedIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        onDestinationSelected: (index) =>
+            context.go(_destinations[index].route),
+        destinations: [
+          for (final destination in _destinations)
+            NavigationDestination(
+              icon: Icon(destination.icon),
+              selectedIcon: Icon(destination.selectedIcon),
+              label: destination.label,
+            ),
+        ],
+      ),
     );
   }
 
