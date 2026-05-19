@@ -18,7 +18,12 @@ class LiveRoomController extends ChangeNotifier {
   LiveConnectionState connectionState = LiveConnectionState.stable;
   bool _enteredTracked = false;
 
-  List<RoomParticipant> participantsFor(RoomSetupController setup) {
+  List<RoomParticipant> participantsFor(
+    RoomSetupController setup, {
+    AIStatusValue aiStatus = AIStatusValue.listening,
+  }) {
+    final aiEnabled =
+        setup.selectedAIMode != AIMode.off && aiStatus != AIStatusValue.off;
     final participants = [
       for (final friend in setup.invitedFriends)
         RoomParticipant(
@@ -35,13 +40,15 @@ class LiveRoomController extends ChangeNotifier {
         isSpeaking: activeSpeakerId == 'you',
         isMuted: isMuted,
       ),
-      if (setup.selectedAIMode != AIMode.off)
+      if (aiEnabled)
         RoomParticipant(
           id: 'ai_bima',
           displayName: 'AI Bima',
           role: setup.selectedAIMode.roomLabel.replaceFirst('AI ', ''),
           isAI: true,
-          isSpeaking: activeSpeakerId == 'ai_bima',
+          isSpeaking:
+              activeSpeakerId == 'ai_bima' ||
+              aiStatus == AIStatusValue.speaking,
         ),
     ];
 

@@ -6,6 +6,7 @@ import '../../components/core/oppose_bottom_sheet.dart';
 import '../../components/core/status_pill.dart';
 import '../../components/layout/oppose_header.dart';
 import '../../components/layout/oppose_screen.dart';
+import '../../state/ai_interaction/ai_interaction_scope.dart';
 import '../../state/live_room/live_room_scope.dart';
 import '../../state/room_setup/room_setup_controller.dart';
 import '../../state/room_setup/room_setup_scope.dart';
@@ -38,9 +39,14 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
     super.didChangeDependencies();
     if (!_enteredTracked) {
       _enteredTracked = true;
-      LiveRoomScope.read(
-        context,
-      ).trackEnteredOnce(RoomSetupScope.read(context));
+      final setup = RoomSetupScope.read(context);
+      final ai = AIInteractionScope.read(context);
+      final aiMode = setup.selectedAIMode;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ai.syncWithRoomMode(aiMode);
+      });
+      LiveRoomScope.read(context).trackEnteredOnce(setup);
     }
   }
 
@@ -48,8 +54,9 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
   Widget build(BuildContext context) {
     final setup = RoomSetupScope.watch(context);
     final liveRoom = LiveRoomScope.watch(context);
-    final participants = liveRoom.participantsFor(setup);
-    final aiActive = setup.selectedAIMode != AIMode.off;
+    final ai = AIInteractionScope.watch(context);
+    final participants = liveRoom.participantsFor(setup, aiStatus: ai.status);
+    final aiActive = setup.selectedAIMode != AIMode.off && !ai.isOff;
 
     return OpposeScreen(
       showBottomNavigation: true,
@@ -58,7 +65,7 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
           title: setup.roomTitle,
           subtitle: 'Friends only room with transparent AI controls.',
           trailing: AIStatusPill(
-            status: aiActive ? AIStatusValue.listening : AIStatusValue.off,
+            status: aiActive ? ai.status : AIStatusValue.off,
           ),
         ),
         const SizedBox(height: OpposeSpacing.md),
@@ -106,7 +113,7 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
         const SizedBox(height: OpposeSpacing.xl),
         RoomControlBar(
           isMuted: liveRoom.isMuted,
-          aiMode: setup.selectedAIMode,
+          aiMode: aiActive ? setup.selectedAIMode : AIMode.off,
           onMute: liveRoom.toggleMute,
           onChat: () {
             liveRoom.trackRoomChatOpened();
