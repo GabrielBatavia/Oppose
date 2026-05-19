@@ -13,6 +13,8 @@ import '../state/onboarding/onboarding_controller.dart';
 import '../state/onboarding/onboarding_scope.dart';
 import '../state/room_setup/room_setup_controller.dart';
 import '../state/room_setup/room_setup_scope.dart';
+import '../state/room_summary/room_summary_controller.dart';
+import '../state/room_summary/room_summary_scope.dart';
 import '../theme/oppose_theme.dart';
 
 class OpposeApp extends StatefulWidget {
@@ -28,6 +30,7 @@ class _OpposeAppState extends State<OpposeApp> {
   late final RoomSetupController _roomSetupController;
   late final LiveRoomController _liveRoomController;
   late final AIInteractionController _aiInteractionController;
+  late final RoomSummaryController _roomSummaryController;
   late final GoRouter _router;
 
   @override
@@ -48,12 +51,16 @@ class _OpposeAppState extends State<OpposeApp> {
     _aiInteractionController = AIInteractionController(
       analytics: const NoopAnalyticsService(),
     );
+    _roomSummaryController = RoomSummaryController(
+      analytics: const NoopAnalyticsService(),
+    );
     _router = createAppRouter();
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _roomSummaryController.dispose();
     _aiInteractionController.dispose();
     _liveRoomController.dispose();
     _roomSetupController.dispose();
@@ -74,11 +81,14 @@ class _OpposeAppState extends State<OpposeApp> {
             controller: _liveRoomController,
             child: AIInteractionScope(
               controller: _aiInteractionController,
-              child: MaterialApp.router(
-                title: 'Oppose',
-                debugShowCheckedModeBanner: false,
-                theme: OpposeTheme.light,
-                routerConfig: _router,
+              child: RoomSummaryScope(
+                controller: _roomSummaryController,
+                child: MaterialApp.router(
+                  title: 'Oppose',
+                  debugShowCheckedModeBanner: false,
+                  theme: OpposeTheme.light,
+                  routerConfig: _router,
+                ),
               ),
             ),
           ),
