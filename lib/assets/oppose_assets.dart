@@ -28,6 +28,25 @@ class OpposeAssets {
       '$base/oppose_chats_avatar_weekend_debate_group.png.png';
   static const bimaCreateRoom =
       '$base/oppose_create_room_bima_bottom_peek_mug.png.png';
+  static const createRoomQuickHangout =
+      '$base/oppose_create_room_quick_hangout_mug_icon.png.png';
+  static const createRoomDailyDebate =
+      '$base/oppose_create_room_daily_debate_sun_icon.png.png';
+  static const createRoomStudyTalk =
+      '$base/oppose_create_room_study_talk_book_icon.png.png';
+  static const createRoomCustom =
+      '$base/oppose_create_room_custom_gear_icon.png.png';
+  static const createRoomFriendAvatarRow =
+      '$base/oppose_create_room_friend_avatar_row.png.png';
+  static const lobbyChatBadge =
+      '$base/oppose_room_lobby_chat_badge_top.png.png';
+  static const lobbyFriendAvatars =
+      '$base/oppose_room_lobby_friend_avatars.png.png';
+  static const lobbyMicReady = '$base/oppose_room_lobby_mic_ready_icon.png.png';
+  static const lobbyAIQuietHelper =
+      '$base/oppose_room_lobby_ai_quiet_helper_icon.png.png';
+  static const lobbyRespectRule =
+      '$base/oppose_room_lobby_respect_rule_handshake_icon.png.png';
   static const aiDrawerRobot =
       '$base/oppose_ai_drawer_robot_bima_headset.png.png';
   static const aiLiveRoomAvatar =
