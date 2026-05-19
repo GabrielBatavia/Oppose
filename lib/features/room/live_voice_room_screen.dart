@@ -9,7 +9,8 @@ import '../../components/core/paper_card.dart';
 import '../../components/core/status_pill.dart';
 import '../../components/layout/oppose_header.dart';
 import '../../components/layout/oppose_screen.dart';
-import '../../state/mock_data/mock_oppose_data.dart';
+import '../../state/room_setup/room_setup_controller.dart';
+import '../../state/room_setup/room_setup_scope.dart';
 import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import '../../types/domain_models.dart';
@@ -27,15 +28,37 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final room = MockOpposeData.room;
+    final setup = RoomSetupScope.watch(context);
+    final participants = [
+      for (final friend in setup.invitedFriends)
+        RoomParticipant(
+          id: friend.id,
+          displayName: friend.displayName,
+          role: 'Friend',
+          avatarAsset: friend.avatarAsset,
+          isSpeaking: friend.id == 'maya',
+        ),
+      const RoomParticipant(id: 'you', displayName: 'You', role: 'Host'),
+      if (setup.selectedAIMode != AIMode.off)
+        RoomParticipant(
+          id: 'ai_bima',
+          displayName: 'AI Bima',
+          role: setup.selectedAIMode.roomLabel.replaceFirst('AI ', ''),
+          isAI: true,
+        ),
+    ];
 
     return OpposeScreen(
       showBottomNavigation: true,
       children: [
         OpposeHeader(
-          title: room.title,
+          title: setup.roomTitle,
           subtitle: 'Friends only room with transparent AI controls.',
-          trailing: const AIStatusPill(status: AIStatusValue.listening),
+          trailing: AIStatusPill(
+            status: setup.selectedAIMode == AIMode.off
+                ? AIStatusValue.off
+                : AIStatusValue.listening,
+          ),
         ),
         const SizedBox(height: OpposeSpacing.md),
         const StatusPill(
@@ -51,13 +74,14 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
           mainAxisSpacing: OpposeSpacing.md,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            for (final participant in room.participants)
+            for (final participant in participants)
               PaperCard(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     OpposeAvatar(
                       label: participant.displayName,
+                      imageAsset: participant.avatarAsset,
                       isAI: participant.isAI,
                       isSpeaking: participant.isSpeaking,
                     ),
@@ -84,7 +108,7 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
             children: [
               Text('Topic', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: OpposeSpacing.sm),
-              Text(room.topic),
+              Text(setup.effectiveTopic),
             ],
           ),
         ),
