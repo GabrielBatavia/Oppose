@@ -275,12 +275,90 @@ void main() {
     expect(find.text('AI Bima'), findsNothing);
     expect(find.text('AI participant'), findsNothing);
   });
+
+  testWidgets('room summary reflects room setup and actions', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Create');
+    await tester.enterText(
+      find.byType(EditableText).last,
+      'Can group study be more fun?',
+    );
+    await tester.pumpAndSettle();
+    await tapVisibleText(tester, 'Study Talk');
+    await tapVisibleText(tester, 'AI Brainstormer');
+    await tapVisibleText(tester, 'Start room');
+    await tapVisibleText(tester, 'Join room');
+    await leaveRoomForSummary(tester);
+
+    expect(find.text('Room Summary'), findsOneWidget);
+    expect(find.text('Study Talk Room'), findsWidgets);
+    expect(find.text('Can group study be more fun?'), findsOneWidget);
+    expect(find.text('Summary: Private to me'), findsOneWidget);
+    expect(find.text('AI Brainstormer'), findsOneWidget);
+    expect(find.text('Main takeaways'), findsOneWidget);
+    expect(
+      find.textContaining('The room focused on "Can group study be more fun?"'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Brainstormer mode pushed the room'),
+      findsOneWidget,
+    );
+
+    await tapVisibleText(tester, 'Save summary');
+    expect(find.text('Summary saved privately.'), findsOneWidget);
+    expect(find.text('Saved'), findsWidgets);
+
+    await tapVisibleText(tester, 'Share with room');
+    expect(find.text('Shared with room members.'), findsOneWidget);
+    expect(find.text('Shared with room'), findsWidgets);
+
+    await tapVisibleText(tester, 'Delete summary');
+    expect(find.text('Summary deleted from this device.'), findsOneWidget);
+    expect(find.text('No summary generated'), findsOneWidget);
+    expect(find.text('Main takeaways'), findsNothing);
+  });
+
+  testWidgets('room summary respects Summary Off setting', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Create');
+    await tapVisibleText(tester, 'Summary Off');
+    await tapVisibleText(tester, 'Start room');
+    await tapVisibleText(tester, 'Join room');
+    await leaveRoomForSummary(tester);
+
+    expect(find.text('Room Summary'), findsOneWidget);
+    expect(find.text('Summary was off'), findsOneWidget);
+    expect(find.text('No summary generated'), findsOneWidget);
+    expect(
+      find.text(
+        'You chose Summary Off before joining. Oppose did not create room notes.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Main takeaways'), findsNothing);
+
+    await tapVisibleText(tester, 'Back to home');
+    expect(find.text("Hi, Bima's Friend"), findsOneWidget);
+  });
 }
 
 Future<void> enterDefaultLiveRoom(WidgetTester tester) async {
   await tapVisibleText(tester, 'Create');
   await tapVisibleText(tester, 'Start room');
   await tapVisibleText(tester, 'Join room');
+}
+
+Future<void> leaveRoomForSummary(WidgetTester tester) async {
+  await tapVisibleText(tester, 'Leave');
+  expect(find.text('Leave room?'), findsOneWidget);
+  await tapVisibleText(tester, 'Leave and see summary');
 }
 
 Future<void> pumpAIResponse(WidgetTester tester) async {
