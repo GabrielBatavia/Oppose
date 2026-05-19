@@ -167,6 +167,63 @@ void main() {
     expect(find.text('Study Talk Room'), findsOneWidget);
     expect(find.text('Can group study be more fun?'), findsOneWidget);
   });
+
+  testWidgets('live room controls, sheets, and leave flow work', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Create');
+    await tapVisibleText(tester, 'Start room');
+    await tapVisibleText(tester, 'Join room');
+
+    expect(find.text('Daily Debate Room'), findsOneWidget);
+    expect(find.text('AI Bima'), findsOneWidget);
+    expect(find.text('Friends only'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Mute');
+    expect(find.text('Muted'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Reconnecting');
+    expect(find.text('Reconnecting'), findsWidgets);
+
+    await tapVisibleText(tester, 'Raka');
+    expect(find.text('Speaking'), findsWidgets);
+
+    await tapVisibleText(tester, 'Chat');
+    expect(find.text('Room chat'), findsOneWidget);
+    await tapVisibleText(tester, 'Close');
+
+    await tapVisibleText(tester, 'Ask AI');
+    expect(find.text('AI Helper'), findsOneWidget);
+    await tapVisibleText(tester, 'Turn off AI');
+
+    await tapVisibleText(tester, 'Invite');
+    expect(find.text('Invite to live room'), findsOneWidget);
+    await tapVisibleText(tester, 'Done');
+
+    await tapVisibleText(tester, 'Leave');
+    expect(find.text('Leave room?'), findsOneWidget);
+    await tapVisibleText(tester, 'Leave and see summary');
+    expect(find.text('Room Summary'), findsOneWidget);
+  });
+
+  testWidgets('live room respects AI Off mode', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Create');
+    await tapVisibleText(tester, 'AI Off');
+    await tapVisibleText(tester, 'Start room');
+    await tapVisibleText(tester, 'Join room');
+
+    expect(find.text('AI Off'), findsWidgets);
+    expect(find.text('AI Bima'), findsNothing);
+    expect(find.text('AI participant'), findsNothing);
+  });
 }
 
 Future<void> completeOnboarding(

@@ -42,3 +42,5 @@ Sprint 3 polished Home into the daily dashboard with typed Home state, Daily Deb
 Sprint 4 implemented the Messaging MVP with searchable chats, reusable chat list items, direct chat bubbles, local message sending, AI helper responses, and chat-to-room routing. Sprint 5 should focus on Create Room and Room Lobby.
 
 Sprint 5 implemented Create Room and Room Lobby with shared room setup state, room type/friend/AI/summary selection, mic and audio-route mock states, lobby AI settings, and state carry-through into Live Voice Room. Sprint 6 should focus on Live Voice Room UI alpha.
+
+Sprint 6 implemented the Live Voice Room UI alpha with shared live-room state, participant cards, speaking indicators, mute state, connection states, chat/invite/leave sheets, AI drawer access, and AI-off handling. Sprint 7 should focus on AI Drawer and AI interaction alpha.
