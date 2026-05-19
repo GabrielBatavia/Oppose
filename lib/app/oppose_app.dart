@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import 'navigation/app_router.dart';
 import '../services/analytics/analytics_service.dart';
+import '../state/ai_interaction/ai_interaction_controller.dart';
+import '../state/ai_interaction/ai_interaction_scope.dart';
 import '../state/live_room/live_room_controller.dart';
 import '../state/live_room/live_room_scope.dart';
 import '../state/messaging/messaging_controller.dart';
@@ -25,6 +27,7 @@ class _OpposeAppState extends State<OpposeApp> {
   late final MessagingController _messagingController;
   late final RoomSetupController _roomSetupController;
   late final LiveRoomController _liveRoomController;
+  late final AIInteractionController _aiInteractionController;
   late final GoRouter _router;
 
   @override
@@ -42,12 +45,16 @@ class _OpposeAppState extends State<OpposeApp> {
     _liveRoomController = LiveRoomController(
       analytics: const NoopAnalyticsService(),
     );
+    _aiInteractionController = AIInteractionController(
+      analytics: const NoopAnalyticsService(),
+    );
     _router = createAppRouter();
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _aiInteractionController.dispose();
     _liveRoomController.dispose();
     _roomSetupController.dispose();
     _messagingController.dispose();
@@ -65,11 +72,14 @@ class _OpposeAppState extends State<OpposeApp> {
           controller: _roomSetupController,
           child: LiveRoomScope(
             controller: _liveRoomController,
-            child: MaterialApp.router(
-              title: 'Oppose',
-              debugShowCheckedModeBanner: false,
-              theme: OpposeTheme.light,
-              routerConfig: _router,
+            child: AIInteractionScope(
+              controller: _aiInteractionController,
+              child: MaterialApp.router(
+                title: 'Oppose',
+                debugShowCheckedModeBanner: false,
+                theme: OpposeTheme.light,
+                routerConfig: _router,
+              ),
             ),
           ),
         ),
