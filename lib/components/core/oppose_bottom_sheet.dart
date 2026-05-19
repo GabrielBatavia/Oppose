@@ -23,8 +23,11 @@ class OpposeBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxHeight = MediaQuery.of(context).size.height * 0.88;
+
     return Container(
       width: double.infinity,
+      constraints: BoxConstraints(maxHeight: maxHeight),
       padding: EdgeInsets.only(
         left: OpposeSpacing.xl,
         right: OpposeSpacing.xl,
@@ -49,7 +52,7 @@ class OpposeBottomSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: OpposeSpacing.lg),
-          child,
+          Flexible(child: SingleChildScrollView(child: child)),
         ],
       ),
     );

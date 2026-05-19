@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import 'navigation/app_router.dart';
 import '../services/analytics/analytics_service.dart';
+import '../state/live_room/live_room_controller.dart';
+import '../state/live_room/live_room_scope.dart';
 import '../state/messaging/messaging_controller.dart';
 import '../state/messaging/messaging_scope.dart';
 import '../state/onboarding/onboarding_controller.dart';
@@ -22,6 +24,7 @@ class _OpposeAppState extends State<OpposeApp> {
   late final OnboardingController _onboardingController;
   late final MessagingController _messagingController;
   late final RoomSetupController _roomSetupController;
+  late final LiveRoomController _liveRoomController;
   late final GoRouter _router;
 
   @override
@@ -36,12 +39,16 @@ class _OpposeAppState extends State<OpposeApp> {
     _roomSetupController = RoomSetupController(
       analytics: const NoopAnalyticsService(),
     );
+    _liveRoomController = LiveRoomController(
+      analytics: const NoopAnalyticsService(),
+    );
     _router = createAppRouter();
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _liveRoomController.dispose();
     _roomSetupController.dispose();
     _messagingController.dispose();
     _onboardingController.dispose();
@@ -56,11 +63,14 @@ class _OpposeAppState extends State<OpposeApp> {
         controller: _messagingController,
         child: RoomSetupScope(
           controller: _roomSetupController,
-          child: MaterialApp.router(
-            title: 'Oppose',
-            debugShowCheckedModeBanner: false,
-            theme: OpposeTheme.light,
-            routerConfig: _router,
+          child: LiveRoomScope(
+            controller: _liveRoomController,
+            child: MaterialApp.router(
+              title: 'Oppose',
+              debugShowCheckedModeBanner: false,
+              theme: OpposeTheme.light,
+              routerConfig: _router,
+            ),
           ),
         ),
       ),
