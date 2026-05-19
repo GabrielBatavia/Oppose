@@ -40,3 +40,5 @@ Sprint 2 implemented the onboarding flow from Welcome through AI Consent into Ho
 Sprint 3 polished Home into the daily dashboard with typed Home state, Daily Debate selection, live friends, recent chats, Start Room CTA, stable bottom navigation, and Home navigation tests. Sprint 4 should focus on Messaging MVP.
 
 Sprint 4 implemented the Messaging MVP with searchable chats, reusable chat list items, direct chat bubbles, local message sending, AI helper responses, and chat-to-room routing. Sprint 5 should focus on Create Room and Room Lobby.
+
+Sprint 5 implemented Create Room and Room Lobby with shared room setup state, room type/friend/AI/summary selection, mic and audio-route mock states, lobby AI settings, and state carry-through into Live Voice Room. Sprint 6 should focus on Live Voice Room UI alpha.

@@ -120,6 +120,53 @@ void main() {
     await tapVisibleFinder(tester, find.text('Start room').last);
     expect(find.text('Create a room'), findsOneWidget);
   });
+
+  testWidgets('create room selections carry into lobby and live room', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+
+    await tapVisibleText(tester, 'Create');
+    expect(find.text('Create a room'), findsOneWidget);
+    expect(find.text('Quick Hangout'), findsOneWidget);
+    expect(find.text('Daily Debate'), findsOneWidget);
+
+    await tester.enterText(
+      find.byType(EditableText).last,
+      'Can group study be more fun?',
+    );
+    await tester.pumpAndSettle();
+    await tapVisibleText(tester, 'Study Talk');
+    await tapVisibleText(tester, 'AI Brainstormer');
+    await tapVisibleText(tester, 'Shared with room');
+    await tapVisibleText(tester, 'Raka');
+
+    await tapVisibleText(tester, 'Start room');
+    expect(find.text('Study Talk Room'), findsOneWidget);
+    expect(find.text('Can group study be more fun?'), findsOneWidget);
+    expect(find.text('AI Brainstormer'), findsOneWidget);
+    expect(find.text('Summary: Shared with room'), findsOneWidget);
+    expect(find.text('2 friends are here'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Mock permission denied');
+    expect(find.text('Mic permission denied'), findsOneWidget);
+    expect(
+      find.text('You can join, but mic may not work yet.'),
+      findsOneWidget,
+    );
+
+    await tapVisibleText(tester, 'Change AI settings');
+    expect(find.text('AI settings'), findsOneWidget);
+    await tapVisibleText(tester, 'AI Off');
+    await tapVisibleText(tester, 'Save AI settings');
+    expect(find.text('AI Off'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Join room');
+    expect(find.text('Study Talk Room'), findsOneWidget);
+    expect(find.text('Can group study be more fun?'), findsOneWidget);
+  });
 }
 
 Future<void> completeOnboarding(
