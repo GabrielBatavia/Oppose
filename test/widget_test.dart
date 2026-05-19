@@ -199,6 +199,9 @@ void main() {
     await tapVisibleText(tester, 'Ask AI');
     expect(find.text('AI Helper'), findsOneWidget);
     await tapVisibleText(tester, 'Turn off AI');
+    expect(find.text('AI Bima'), findsNothing);
+    expect(find.text('AI participant'), findsNothing);
+    expect(find.text('AI Off'), findsWidgets);
 
     await tapVisibleText(tester, 'Invite');
     expect(find.text('Invite to live room'), findsOneWidget);
@@ -208,6 +211,54 @@ void main() {
     expect(find.text('Leave room?'), findsOneWidget);
     await tapVisibleText(tester, 'Leave and see summary');
     expect(find.text('Room Summary'), findsOneWidget);
+  });
+
+  testWidgets('AI drawer supports modes quick actions and prompts', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await enterDefaultLiveRoom(tester);
+
+    await tapVisibleText(tester, 'Ask AI');
+    expect(find.text('AI Helper'), findsOneWidget);
+    expect(find.text('Memory Off'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Brainstormer');
+    await tapVisibleText(tester, 'Summarize so far');
+    await pumpAIResponse(tester);
+    expect(
+      find.textContaining('So far: one side values flexibility'),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byType(EditableText).last,
+      'How can we make this fair?',
+    );
+    await tester.pumpAndSettle();
+    await tapVisibleFinder(tester, find.text('Ask AI').last);
+    await pumpAIResponse(tester);
+    expect(find.textContaining('How can we make this fair?'), findsOneWidget);
+  });
+
+  testWidgets('turning off AI disables live room AI controls', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await enterDefaultLiveRoom(tester);
+
+    expect(find.text('AI Bima'), findsOneWidget);
+    await tapVisibleText(tester, 'Ask AI');
+    await tapVisibleText(tester, 'Turn off AI');
+
+    expect(find.text('AI Bima'), findsNothing);
+    expect(find.text('AI participant'), findsNothing);
+    expect(find.text('AI Off'), findsWidgets);
+
+    await tapVisibleFinder(tester, find.text('AI Off').last);
+    expect(find.text('AI Helper'), findsNothing);
   });
 
   testWidgets('live room respects AI Off mode', (tester) async {
@@ -224,6 +275,17 @@ void main() {
     expect(find.text('AI Bima'), findsNothing);
     expect(find.text('AI participant'), findsNothing);
   });
+}
+
+Future<void> enterDefaultLiveRoom(WidgetTester tester) async {
+  await tapVisibleText(tester, 'Create');
+  await tapVisibleText(tester, 'Start room');
+  await tapVisibleText(tester, 'Join room');
+}
+
+Future<void> pumpAIResponse(WidgetTester tester) async {
+  await tester.pump(const Duration(milliseconds: 600));
+  await tester.pumpAndSettle();
 }
 
 Future<void> completeOnboarding(

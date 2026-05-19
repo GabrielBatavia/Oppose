@@ -43,4 +43,6 @@ Sprint 4 implemented the Messaging MVP with searchable chats, reusable chat list
 
 Sprint 5 implemented Create Room and Room Lobby with shared room setup state, room type/friend/AI/summary selection, mic and audio-route mock states, lobby AI settings, and state carry-through into Live Voice Room. Sprint 6 should focus on Live Voice Room UI alpha.
 
-Sprint 6 implemented the Live Voice Room UI alpha with shared live-room state, participant cards, speaking indicators, mute state, connection states, chat/invite/leave sheets, AI drawer access, and AI-off handling. Sprint 7 should focus on AI Drawer and AI interaction alpha.
+Sprint 6 implemented the Live Voice Room UI alpha with shared live-room state, participant cards, speaking indicators, mute state, connection states, chat/invite/leave sheets, AI drawer access, and AI-off handling.
+
+Sprint 7 implemented the AI Drawer and AI interaction alpha with shared AI state, consent-aware controls, mode selection, Memory Off visibility, quick actions, prompt-based mock responses, status transitions, and Turn off AI behavior that updates Live Room immediately. Sprint 8 should focus on Room Summary MVP, Safety/Reporting MVP, or Profile/Social Graph MVP.
