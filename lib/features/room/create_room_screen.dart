@@ -4,67 +4,157 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes/app_routes.dart';
 import '../../assets/oppose_assets.dart';
 import '../../components/buttons/oppose_buttons.dart';
-import '../../components/core/avatar.dart';
-import '../../components/core/selectable.dart';
+import '../../components/core/paper_card.dart';
 import '../../components/inputs/oppose_text_input.dart';
+import '../../components/layout/oppose_header.dart';
+import '../../components/layout/oppose_screen.dart';
 import '../../components/stickers/sticker_image.dart';
 import '../../state/mock_data/mock_oppose_data.dart';
+import '../../state/room_setup/room_setup_controller.dart';
+import '../../state/room_setup/room_setup_scope.dart';
+import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
-import '../shared/feature_stub_screen.dart';
+import '../../types/domain_models.dart';
+import 'widgets/ai_mode_card.dart';
+import 'widgets/create_room_section.dart';
+import 'widgets/invite_friend_selector.dart';
+import 'widgets/room_type_card.dart';
+import 'widgets/summary_privacy_card.dart';
 
-class CreateRoomScreen extends StatelessWidget {
+class CreateRoomScreen extends StatefulWidget {
   const CreateRoomScreen({super.key});
 
   @override
+  State<CreateRoomScreen> createState() => _CreateRoomScreenState();
+}
+
+class _CreateRoomScreenState extends State<CreateRoomScreen> {
+  bool _viewTracked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_viewTracked) {
+      _viewTracked = true;
+      RoomSetupScope.read(context).trackCreateViewedOnce();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FeatureStubScreen(
-      title: 'Create a room',
-      subtitle: 'Set topic, invite friends, and choose AI boundaries.',
-      sprintLabel: 'Sprint 5 target',
+    final setup = RoomSetupScope.watch(context);
+
+    return OpposeScreen(
       showBottomNavigation: true,
-      hero: const StickerImage(asset: OpposeAssets.bimaCreateRoom, size: 110),
-      bullets: const [
-        'Room topic input and room type cards.',
-        'Invite friend row using real avatar components.',
-        'Explicit AI mode and summary privacy selectors.',
-      ],
-      actions: [
-        const OpposeTextInput(
-          label: 'Room topic',
-          hintText: 'Is remote work good for the future?',
+      children: [
+        const OpposeHeader(
+          title: 'Create a room',
+          subtitle: 'Set topic, invite friends, and choose AI boundaries.',
         ),
-        SelectableCard(
-          title: 'Daily Debate',
-          subtitle: 'A focused room around today\'s question.',
-          selected: true,
-          icon: Icons.wb_sunny_rounded,
-          onTap: () {},
-        ),
-        Row(
-          children: [
-            for (final friend in MockOpposeData.friends.take(3)) ...[
-              OpposeAvatar(label: friend.displayName),
-              const SizedBox(width: OpposeSpacing.sm),
+        const SizedBox(height: OpposeSpacing.xl),
+        PaperCard(
+          color: OpposeColors.sunflower.withValues(alpha: 0.16),
+          child: Row(
+            children: [
+              const StickerImage(asset: OpposeAssets.bimaCreateRoom, size: 104),
+              const SizedBox(width: OpposeSpacing.md),
+              Expanded(
+                child: Text(
+                  'Rooms are friend-first. AI stays quiet unless you ask.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
             ],
-          ],
+          ),
         ),
-        SelectableCard(
-          title: 'AI Quiet Helper',
-          subtitle: 'Responds only when asked.',
-          selected: true,
-          icon: Icons.smart_toy_rounded,
-          onTap: () {},
+        const SizedBox(height: OpposeSpacing.xl),
+        CreateRoomSection(
+          title: 'Room topic',
+          subtitle:
+              'Optional. We will use a friendly default if you leave it blank.',
+          child: OpposeTextInput(
+            label: 'Room topic',
+            hintText: setup.selectedRoomType.defaultTopic,
+            prefixIcon: const Icon(Icons.chat_bubble_outline_rounded),
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: setup.setTopic,
+          ),
         ),
-        SelectableCard(
-          title: 'Private summary',
-          subtitle: 'Only you can see this summary unless you share it.',
-          selected: true,
-          icon: Icons.lock_outline_rounded,
-          onTap: () {},
+        const SizedBox(height: OpposeSpacing.xl),
+        CreateRoomSection(
+          title: 'Room type',
+          child: Column(
+            children: [
+              for (final type in RoomSetupType.values) ...[
+                RoomTypeCard(
+                  type: type,
+                  selected: setup.selectedRoomType == type,
+                  onTap: () => setup.selectRoomType(type),
+                ),
+                const SizedBox(height: OpposeSpacing.md),
+              ],
+            ],
+          ),
         ),
+        const SizedBox(height: OpposeSpacing.md),
+        CreateRoomSection(
+          title: 'Invite friends',
+          subtitle: '${setup.invitedFriendIds.length} selected',
+          child: InviteFriendSelector(
+            friends: MockOpposeData.friends,
+            selectedFriendIds: setup.invitedFriendIds,
+            onToggleFriend: setup.toggleFriend,
+            onAddMore: () => ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Friend picker is coming soon.')),
+            ),
+          ),
+        ),
+        const SizedBox(height: OpposeSpacing.xl),
+        CreateRoomSection(
+          title: 'AI mode',
+          subtitle: 'AI mode must be explicit before a room starts.',
+          child: Column(
+            children: [
+              for (final mode in const [
+                AIMode.off,
+                AIMode.quietHelper,
+                AIMode.brainstormer,
+                AIMode.moderatorLite,
+              ]) ...[
+                AIModeCard(
+                  mode: mode,
+                  selected: setup.selectedAIMode == mode,
+                  onTap: () => setup.selectAIMode(mode),
+                ),
+                const SizedBox(height: OpposeSpacing.md),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: OpposeSpacing.md),
+        CreateRoomSection(
+          title: 'Summary privacy',
+          subtitle: 'Summaries are optional and deletable.',
+          child: Column(
+            children: [
+              for (final setting in SummarySetting.values) ...[
+                SummaryPrivacyCard(
+                  setting: setting,
+                  selected: setup.selectedSummarySetting == setting,
+                  onTap: () => setup.selectSummarySetting(setting),
+                ),
+                const SizedBox(height: OpposeSpacing.md),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: OpposeSpacing.lg),
         PrimaryButton(
           label: 'Start room',
-          onPressed: () => context.go(AppRoutes.roomLobby),
+          onPressed: () {
+            setup.createRoom();
+            context.go(AppRoutes.roomLobby);
+          },
         ),
       ],
     );
