@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/routes/app_routes.dart';
-import '../../components/buttons/oppose_buttons.dart';
-import '../../components/core/avatar.dart';
 import '../../components/core/oppose_bottom_sheet.dart';
-import '../../components/core/paper_card.dart';
 import '../../components/core/status_pill.dart';
 import '../../components/layout/oppose_header.dart';
 import '../../components/layout/oppose_screen.dart';
+import '../../state/live_room/live_room_scope.dart';
 import '../../state/room_setup/room_setup_controller.dart';
 import '../../state/room_setup/room_setup_scope.dart';
 import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import '../../types/domain_models.dart';
 import '../ai/ai_control_drawer.dart';
+import 'widgets/connection_status_pill.dart';
+import 'widgets/leave_room_sheet.dart';
+import 'widgets/mock_room_state_card.dart';
+import 'widgets/room_chat_sheet.dart';
+import 'widgets/room_control_bar.dart';
+import 'widgets/room_invite_sheet.dart';
+import 'widgets/room_participant_card.dart';
+import 'widgets/room_privacy_pill.dart';
+import 'widgets/room_topic_card.dart';
 
 class LiveVoiceRoomScreen extends StatefulWidget {
   const LiveVoiceRoomScreen({super.key});
@@ -24,29 +31,25 @@ class LiveVoiceRoomScreen extends StatefulWidget {
 }
 
 class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
-  bool isMuted = false;
+  bool _enteredTracked = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_enteredTracked) {
+      _enteredTracked = true;
+      LiveRoomScope.read(
+        context,
+      ).trackEnteredOnce(RoomSetupScope.read(context));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final setup = RoomSetupScope.watch(context);
-    final participants = [
-      for (final friend in setup.invitedFriends)
-        RoomParticipant(
-          id: friend.id,
-          displayName: friend.displayName,
-          role: 'Friend',
-          avatarAsset: friend.avatarAsset,
-          isSpeaking: friend.id == 'maya',
-        ),
-      const RoomParticipant(id: 'you', displayName: 'You', role: 'Host'),
-      if (setup.selectedAIMode != AIMode.off)
-        RoomParticipant(
-          id: 'ai_bima',
-          displayName: 'AI Bima',
-          role: setup.selectedAIMode.roomLabel.replaceFirst('AI ', ''),
-          isAI: true,
-        ),
-    ];
+    final liveRoom = LiveRoomScope.watch(context);
+    final participants = liveRoom.participantsFor(setup);
+    final aiActive = setup.selectedAIMode != AIMode.off;
 
     return OpposeScreen(
       showBottomNavigation: true,
@@ -55,16 +58,24 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
           title: setup.roomTitle,
           subtitle: 'Friends only room with transparent AI controls.',
           trailing: AIStatusPill(
-            status: setup.selectedAIMode == AIMode.off
-                ? AIStatusValue.off
-                : AIStatusValue.listening,
+            status: aiActive ? AIStatusValue.listening : AIStatusValue.off,
           ),
         ),
         const SizedBox(height: OpposeSpacing.md),
-        const StatusPill(
-          label: 'Good connection',
-          icon: Icons.wifi_rounded,
-          color: OpposeColors.success,
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            const RoomPrivacyPill(),
+            ConnectionStatusPill(state: liveRoom.connectionState),
+            StatusPill(
+              label: setup.selectedAIMode.roomLabel,
+              icon: aiActive
+                  ? Icons.smart_toy_rounded
+                  : Icons.power_settings_new_rounded,
+              color: aiActive ? OpposeColors.indigo : OpposeColors.mutedGray,
+            ),
+          ],
         ),
         const SizedBox(height: OpposeSpacing.xl),
         GridView.count(
@@ -72,80 +83,64 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
           shrinkWrap: true,
           crossAxisSpacing: OpposeSpacing.md,
           mainAxisSpacing: OpposeSpacing.md,
+          childAspectRatio: 0.82,
           physics: const NeverScrollableScrollPhysics(),
           children: [
             for (final participant in participants)
-              PaperCard(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OpposeAvatar(
-                      label: participant.displayName,
-                      imageAsset: participant.avatarAsset,
-                      isAI: participant.isAI,
-                      isSpeaking: participant.isSpeaking,
-                    ),
-                    const SizedBox(height: OpposeSpacing.md),
-                    Text(
-                      participant.displayName,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(participant.role),
-                    if (participant.isAI)
-                      const StatusPill(
-                        label: 'AI',
-                        icon: Icons.smart_toy_rounded,
-                      ),
-                  ],
-                ),
+              RoomParticipantCard(
+                participant: participant,
+                onTap: () => liveRoom.setActiveSpeaker(participant.id),
               ),
           ],
         ),
         const SizedBox(height: OpposeSpacing.xl),
-        PaperCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Topic', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: OpposeSpacing.sm),
-              Text(setup.effectiveTopic),
-            ],
-          ),
+        RoomTopicCard(
+          topic: setup.effectiveTopic,
+          roomTypeLabel: setup.selectedRoomType.label,
         ),
         const SizedBox(height: OpposeSpacing.xl),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            ActionChip(
-              avatar: Icon(isMuted ? Icons.mic_off_rounded : Icons.mic_rounded),
-              label: Text(isMuted ? 'Muted' : 'Mute'),
-              onPressed: () => setState(() => isMuted = !isMuted),
-            ),
-            ActionChip(
-              avatar: const Icon(Icons.chat_bubble_rounded),
-              label: const Text('Chat'),
-              onPressed: () {},
-            ),
-            ActionChip(
-              avatar: const Icon(Icons.smart_toy_rounded),
-              label: const Text('Ask AI'),
-              onPressed: () => showOpposeBottomSheet(
-                context: context,
-                child: const AIControlDrawer(),
-              ),
-            ),
-            ActionChip(
-              avatar: const Icon(Icons.person_add_alt_1_rounded),
-              label: const Text('Invite'),
-              onPressed: () {},
-            ),
-          ],
+        MockRoomStateCard(
+          connectionState: liveRoom.connectionState,
+          onSelectConnectionState: liveRoom.setConnectionState,
         ),
-        const SizedBox(height: OpposeSpacing.lg),
-        DangerButton(
-          label: 'Leave room',
-          onPressed: () => context.go(AppRoutes.roomSummary),
+        const SizedBox(height: OpposeSpacing.xl),
+        RoomControlBar(
+          isMuted: liveRoom.isMuted,
+          aiMode: setup.selectedAIMode,
+          onMute: liveRoom.toggleMute,
+          onChat: () {
+            liveRoom.trackRoomChatOpened();
+            showOpposeBottomSheet(
+              context: context,
+              child: const RoomChatSheet(),
+            );
+          },
+          onAskAI: () {
+            liveRoom.trackAIDrawerOpened();
+            showOpposeBottomSheet(
+              context: context,
+              child: const AIControlDrawer(),
+            );
+          },
+          onInvite: () {
+            liveRoom.trackInviteClicked();
+            showOpposeBottomSheet(
+              context: context,
+              child: RoomInviteSheet(setup: setup),
+            );
+          },
+          onLeave: () {
+            liveRoom.trackLeaveConfirmationViewed();
+            showOpposeBottomSheet(
+              context: context,
+              child: LeaveRoomSheet(
+                onLeave: () {
+                  liveRoom.leaveRoom();
+                  context.go(AppRoutes.roomSummary);
+                },
+              ),
+            );
+          },
         ),
       ],
     );
