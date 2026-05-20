@@ -10,6 +10,9 @@ Oppose/backend/prisma/schema.prisma
 Database:
 PostgreSQL
 
+Local Docker host port:
+5433 maps to container port 5432 to avoid conflicts with local PostgreSQL services.
+
 ORM:
 Prisma
 
