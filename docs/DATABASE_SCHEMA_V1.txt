@@ -21,9 +21,11 @@ users
 - Stores identity, username, profile display, language, AI consent state, and auth provider mapping.
 - Backend user ID is the stable primary key for all private data.
 - AI consent must be checked server-side before AI endpoints run.
+- Sprint 13 uses this table for development-auth profile persistence.
 
 user_interests
 - Stores profile/onboarding interests as rows for filtering and future recommendations.
+- Sprint 13 replaces current user interests as a transaction for onboarding/profile edits.
 
 friendships
 - Stores friend request lifecycle: pending, accepted, declined, blocked.
@@ -119,7 +121,16 @@ Reports:
 SCHEMA MIGRATION NOTES
 ================================================================================
 
-Sprint 12 creates the schema draft only.
+Sprint 12 created the schema draft.
+
+Sprint 13 uses the existing users and user_interests tables for profile persistence and adds a local seed script.
+
+Seeded development user:
+- id: 00000000-0000-4000-8000-000000000001
+- username: thinkwithbima
+- displayName: Bima's Friend
+- interests: Technology, Friendship, Food
+- aiConsentAccepted: true
 
 Before production migrations:
 - confirm auth provider ID shape
@@ -129,7 +140,7 @@ Before production migrations:
 - decide summary delete semantics
 - decide report target polymorphism strategy
 - add indexes based on query patterns
-- add seed data for local development
+- expand seed data as more backend domains are implemented
 
 Recommended first indexes after validation:
 - users.username

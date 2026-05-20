@@ -2,15 +2,16 @@ OPPOSE API CONTRACTS V1
 Date: 2026-05-19
 
 Purpose:
-Draft backend API contract for moving Oppose from local mock state to real backend services. This is a contract planning document, not a completed backend implementation.
+Draft backend API contract for moving Oppose from local mock state to real backend services. Sprint 13 implements the system endpoints plus auth/profile endpoints using development auth.
 
 Base URL local:
 http://localhost:4000
 
 Authentication:
-- All private endpoints require Authorization: Bearer <token> once auth is implemented.
-- Sprint 12 backend skeleton only exposes unauthenticated /health and /version.
-- Backend must derive current user from the token, not from client-provided user IDs.
+- Sprint 13 private endpoints require development-only header `x-dev-user-id`.
+- Seeded local dev user ID: `00000000-0000-4000-8000-000000000001`.
+- Future production auth should replace dev auth with Authorization: Bearer <token>.
+- Production backend must derive current user from the token, not from client-provided user IDs.
 
 Response format recommendation:
 - Success: JSON object or array as endpoint requires.
@@ -38,7 +39,7 @@ Response:
 {
   "name": "oppose-backend",
   "version": "0.1.0",
-  "sprint": 12
+  "sprint": 13
 }
 
 ================================================================================
@@ -60,10 +61,12 @@ Response:
 
 GET /me
 Purpose: get current user profile.
+Auth: x-dev-user-id in Sprint 13.
 Response: UserDto
 
 PATCH /me/profile
 Purpose: update profile identity.
+Auth: x-dev-user-id in Sprint 13.
 Request:
 {
   "displayName": "Bima's Friend",
@@ -75,17 +78,16 @@ Response: UserDto
 
 PATCH /me/interests
 Purpose: replace current user interests.
+Auth: x-dev-user-id in Sprint 13.
 Request:
 {
   "interests": ["Technology", "Friendship", "Food"]
 }
-Response:
-{
-  "interests": ["Technology", "Friendship", "Food"]
-}
+Response: UserDto
 
 POST /me/ai-consent
 Purpose: record AI consent acceptance.
+Auth: x-dev-user-id in Sprint 13.
 Request:
 {
   "accepted": true,
@@ -95,6 +97,7 @@ Response: UserDto
 
 GET /users/check-username?username=thinkwithbima
 Purpose: username availability check.
+Auth: none in Sprint 13.
 Response:
 {
   "username": "thinkwithbima",
@@ -375,6 +378,9 @@ UserDto:
 - language
 - interests
 - aiConsentAccepted
+- aiConsentVersion
+- createdAt
+- updatedAt
 
 FriendDto:
 - id

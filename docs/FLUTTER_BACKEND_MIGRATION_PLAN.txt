@@ -8,7 +8,8 @@ Current Flutter architecture:
 - UI screens use lightweight InheritedNotifier scopes.
 - Controllers hold local/mock state.
 - Mock data lives in `lib/state/mock_data/mock_oppose_data.dart`.
-- Service interfaces exist for analytics and can be expanded for API/repositories.
+- Service interfaces exist for MVP boundaries.
+- Sprint 13 adds repository interfaces and mock implementations for auth/profile migration.
 
 Migration rule:
 Do not rewrite the UI. Add repository boundaries and move one controller at a time from mock data to backend-backed repositories.
@@ -93,13 +94,13 @@ MIGRATION ORDER
 ================================================================================
 
 Step 1: Repository interfaces with mock implementations
-- Add repository interfaces.
-- Move current mock controller logic behind mock repositories.
+- Add repository interfaces. Sprint 13 starts this with `AuthRepository` and `UserRepository`.
+- Move current mock controller logic behind mock repositories one controller at a time.
 - Keep all UI behavior identical.
 - Existing widget tests should still pass.
 
 Step 2: Auth/profile backend integration
-- Connect onboarding/profile to backend.
+- Connect onboarding/profile to backend endpoints from Sprint 13.
 - Persist username, display name, interests, and AI consent.
 - Add loading/error states.
 
@@ -169,6 +170,8 @@ Add repository tests:
 - API mappers parse DTOs correctly
 - controllers handle success/loading/error states
 
+Sprint 13 added repository tests for mock auth and user repositories.
+
 Add backend contract tests later:
 - health endpoint
 - auth guard behavior
@@ -184,8 +187,15 @@ FIRST FLUTTER CODE CHANGE RECOMMENDATION
 ================================================================================
 
 After Sprint 12 backend skeleton:
-1. Add repository interface files only.
-2. Add mock repository implementations that wrap current mock state.
+1. Add repository interface files only. Done for auth/user in Sprint 13.
+2. Add mock repository implementations that wrap current mock state. Done for auth/user in Sprint 13.
 3. Update controllers only when a backend endpoint exists.
 
 This keeps the app shippable while backend work progresses.
+
+Sprint 13 repository files:
+- `lib/repositories/backend_api_client.dart`
+- `lib/repositories/auth/auth_repository.dart`
+- `lib/repositories/auth/mock_auth_repository.dart`
+- `lib/repositories/user/user_repository.dart`
+- `lib/repositories/user/mock_user_repository.dart`
