@@ -28,12 +28,11 @@ class BackendUserRepository implements UserRepository {
     String? avatarAsset,
     String? language,
   }) async {
-    final body = <String, dynamic>{
-      if (displayName != null) 'displayName': displayName,
-      if (username != null) 'username': username,
-      if (avatarAsset != null) 'avatarUrl': avatarAsset,
-      if (language != null) 'language': language,
-    };
+    final body = <String, dynamic>{};
+    if (displayName != null) body['displayName'] = displayName;
+    if (username != null) body['username'] = username;
+    if (avatarAsset != null) body['avatarUrl'] = avatarAsset;
+    if (language != null) body['language'] = language;
     final json = await client.patch(
       '/me/profile',
       body: body,

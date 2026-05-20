@@ -715,6 +715,7 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
           label: 'Save profile',
           isLoading: _isSaving,
           onPressed: () async {
+            final navigator = Navigator.of(context);
             setState(() => _isSaving = true);
             final ok = await widget.social.updateProfile(
               name: _nameController.text,
@@ -722,7 +723,7 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
             );
             if (!mounted) return;
             setState(() => _isSaving = false);
-            if (ok) Navigator.of(context).pop();
+            if (ok) navigator.pop();
           },
         ),
       ],
