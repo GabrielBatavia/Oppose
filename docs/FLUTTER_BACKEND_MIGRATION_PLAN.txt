@@ -100,9 +100,10 @@ Step 1: Repository interfaces with mock implementations
 - Existing widget tests should still pass.
 
 Step 2: Auth/profile backend integration
-- Connect onboarding/profile to backend endpoints from Sprint 13.
-- Persist username, display name, interests, and AI consent.
-- Add loading/error states.
+- Connect onboarding/profile to backend endpoints from Sprint 13. Sprint 14b adds the backend repository implementation and wiring.
+- Persist username, display name, interests, and AI consent through `UserRepository`.
+- Add loading/error states. Sprint 14b adds these for username/profile, interests, AI consent, and profile edit saves.
+- Keep mock mode default. Backend mode is enabled by dart defines.
 
 Step 3: Social graph backend integration
 - Load friends and friend requests from backend.
@@ -172,6 +173,8 @@ Add repository tests:
 
 Sprint 13 added repository tests for mock auth and user repositories.
 
+Sprint 14b added repository tests for backend user repository mapping, request payloads, dev-auth headers, and structured backend errors.
+
 Add backend contract tests later:
 - health endpoint
 - auth guard behavior
@@ -199,3 +202,21 @@ Sprint 13 repository files:
 - `lib/repositories/auth/mock_auth_repository.dart`
 - `lib/repositories/user/user_repository.dart`
 - `lib/repositories/user/mock_user_repository.dart`
+
+Sprint 14b backend-mode files:
+- `lib/repositories/auth/backend_auth_repository.dart`
+- `lib/repositories/user/backend_user_repository.dart`
+- `lib/repositories/user/user_dto_mapper.dart`
+- `lib/app/oppose_app.dart` repository injection and backend-mode factory
+- `lib/state/onboarding/onboarding_controller.dart` repository-backed profile/interests/AI consent flow
+- `lib/state/social/social_controller.dart` repository-backed profile load/save flow
+
+Backend mode run flags:
+```bash
+flutter run \
+  --dart-define=OPPOSE_USE_BACKEND=true \
+  --dart-define=OPPOSE_BACKEND_URL=http://127.0.0.1:4000 \
+  --dart-define=OPPOSE_DEV_USER_ID=00000000-0000-4000-8000-000000000001
+```
+
+For Android Emulator, use `http://10.0.2.2:4000` for `OPPOSE_BACKEND_URL`.
