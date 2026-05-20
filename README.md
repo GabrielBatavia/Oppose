@@ -47,4 +47,14 @@ Sprint 6 implemented the Live Voice Room UI alpha with shared live-room state, p
 
 Sprint 7 implemented the AI Drawer and AI interaction alpha with shared AI state, consent-aware controls, mode selection, Memory Off visibility, quick actions, prompt-based mock responses, status transitions, and Turn off AI behavior that updates Live Room immediately.
 
-Sprint 8 implemented the Room Summary MVP with shared summary state, dynamic recap content from room setup, summary privacy handling, Save/Share/Delete actions, Summary Off behavior, and post-room widget coverage. Sprint 9 should focus on Safety/Reporting MVP.
+Sprint 8 implemented the Room Summary MVP with shared summary state, dynamic recap content from room setup, summary privacy handling, Save/Share/Delete actions, Summary Off behavior, and post-room widget coverage.
+
+Sprint 9 implemented the Safety/Reporting MVP with shared safety state, enum-backed report reasons, confirmation flow, Direct Chat block handling, Chats blocked indicators, Live Room safety sheet with participant mute/report actions, and a lightweight Profile Safety Center.
+
+Sprint 10 implemented the Profile and Social Graph MVP with shared social state, dynamic profile editing, friend search/management, mock friend requests, blocked/muted management from Profile, and room invite blocked-state handling.
+
+Sprint 11 completed MVP polish and demo readiness with route smoke coverage for every MVP route, clearer local/demo copy, alpha control labels, `MVP_DEMO_CHECKLIST.md`, `MVP_KNOWN_LIMITATIONS.md`, and 23 passing widget tests. Optional Android debug APK build is currently blocked by a malformed local NDK install missing `source.properties`.
+
+Sprint 12 planning has started in `docs/SPRINT_12_REAL_APP_BACKEND_PLANNING.txt`. It defines the recommended backend architecture, data model, API boundaries, realtime voice plan, AI orchestration plan, moderation plan, and migration path from mock MVP to a real backend-backed app.
+
+Sprint 12 implemented the backend foundation and contracts: `backend/` TypeScript Fastify service, `/health` and `/version`, PostgreSQL Docker Compose, Prisma schema draft, API/database/migration docs, and backend validation. Flutter remains stable with 23 passing tests. Android debug APK build is still blocked by the malformed local NDK install documented in `docs/SPRINT_12_BACKEND_FOUNDATION_REPORT.md`.

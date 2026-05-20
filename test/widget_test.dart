@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:oppose/app/oppose_app.dart';
+import 'package:oppose/app/routes/app_routes.dart';
 
 void main() {
   testWidgets('Oppose app opens to welcome screen', (tester) async {
@@ -9,6 +11,33 @@ void main() {
 
     expect(find.text('Different take, better talk.'), findsOneWidget);
     expect(find.text('Start debating'), findsOneWidget);
+  });
+
+  testWidgets('all MVP routes render primary content', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+
+    final routeSmokeCases = <(String, Finder)>[
+      (AppRoutes.welcome, find.text('Different take, better talk.')),
+      (AppRoutes.signUp, find.text('Create your Oppose account')),
+      (AppRoutes.usernameSetup, find.text('Pick your debate name')),
+      (AppRoutes.interestSetup, find.text('What do you like to talk about?')),
+      (AppRoutes.aiConsent, find.text('How AI works in your room')),
+      (AppRoutes.home, find.textContaining('Daily Debate')),
+      (AppRoutes.chats, find.text('Keep better talks going.')),
+      (AppRoutes.directChat, find.text('AI Helper')),
+      (AppRoutes.createRoom, find.text('Create a room')),
+      (AppRoutes.roomLobby, find.text('Daily Debate Room')),
+      (AppRoutes.liveRoom, find.text('Daily Debate Room')),
+      (AppRoutes.roomSummary, find.text('Room Summary')),
+      (AppRoutes.profile, find.text('Your respectful debate identity.')),
+      (AppRoutes.report, find.text('Report a problem')),
+    ];
+
+    for (final (route, finder) in routeSmokeCases) {
+      await goToRoute(tester, route);
+      expect(finder, findsWidgets, reason: 'Route $route should render.');
+    }
   });
 
   testWidgets('user can complete onboarding flow', (tester) async {
@@ -59,6 +88,106 @@ void main() {
 
     await tapVisibleText(tester, 'Profile');
     expect(find.text('Your respectful debate identity.'), findsOneWidget);
+  });
+
+  testWidgets('profile edit updates display name and tagline', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Profile');
+
+    expect(find.text('3 friends'), findsOneWidget);
+    expect(find.text('0 blocked'), findsOneWidget);
+    expect(find.text('0 muted'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Edit profile');
+    expect(find.text('Edit profile'), findsWidgets);
+    await tester.enterText(find.byType(EditableText).at(0), 'Friendly Bima');
+    await tester.enterText(
+      find.byType(EditableText).at(1),
+      'Kind debate, clearer ideas.',
+    );
+    await tester.pumpAndSettle();
+    await tapVisibleText(tester, 'Save profile');
+
+    expect(find.text('Friendly Bima'), findsOneWidget);
+    expect(find.text('Kind debate, clearer ideas.'), findsOneWidget);
+    expect(find.text('Profile updated locally.'), findsOneWidget);
+  });
+
+  testWidgets('profile friend requests can be accepted and declined', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Profile');
+
+    expect(find.text('Nadia'), findsOneWidget);
+    expect(find.text('Dito'), findsOneWidget);
+    await tapVisibleFinder(tester, find.text('Accept').first);
+    expect(find.text('Nadia is now your friend.'), findsOneWidget);
+    expect(find.text('4 friends'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Decline');
+    expect(find.text('Dito request declined.'), findsOneWidget);
+    expect(find.text('No pending friend requests.'), findsOneWidget);
+  });
+
+  testWidgets('profile manages friends and safety lists', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Profile');
+
+    await tapVisibleText(tester, 'Manage friends');
+    expect(find.text('Manage friends'), findsWidgets);
+    await tester.enterText(find.byType(EditableText).last, 'raka');
+    await tester.pumpAndSettle();
+    expect(find.text('Raka'), findsOneWidget);
+    expect(find.text('Maya'), findsNothing);
+
+    await tapVisibleText(tester, 'Mute');
+    expect(find.text('Muted'), findsOneWidget);
+    await tapVisibleText(tester, 'Block');
+    expect(find.text('Blocked'), findsOneWidget);
+    expect(find.text('Unblock'), findsOneWidget);
+    await tapVisibleText(tester, 'Done');
+
+    expect(find.text('1 blocked'), findsOneWidget);
+    expect(find.text('1 muted'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Manage safety');
+    expect(find.text('Blocked users'), findsOneWidget);
+    await tapVisibleText(tester, 'Unblock');
+    expect(find.text('No blocked users.'), findsOneWidget);
+    await tapVisibleText(tester, 'Unmute');
+    expect(find.text('No muted users.'), findsOneWidget);
+    await tapVisibleText(tester, 'Done');
+
+    expect(find.text('0 blocked'), findsOneWidget);
+    expect(find.text('0 muted'), findsOneWidget);
+  });
+
+  testWidgets('room invite disables blocked friends', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Profile');
+    await tapVisibleText(tester, 'Manage friends');
+    await tester.enterText(find.byType(EditableText).last, 'maya');
+    await tester.pumpAndSettle();
+    await tapVisibleText(tester, 'Block');
+    await tapVisibleText(tester, 'Done');
+
+    await tapVisibleText(tester, 'Create');
+    await tester.pumpAndSettle();
+    expect(find.text('2 selected'), findsOneWidget);
+    expect(find.text('Blocked'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Maya');
+    await tester.pumpAndSettle();
+    expect(find.text('2 selected'), findsOneWidget);
   });
 
   testWidgets('chats list renders and search filters conversations', (
@@ -119,6 +248,60 @@ void main() {
 
     await tapVisibleFinder(tester, find.text('Start room').last);
     expect(find.text('Create a room'), findsOneWidget);
+  });
+
+  testWidgets('generic report flow submits from chats', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Chats');
+
+    await tapVisibleText(tester, 'Open report flow');
+    expect(find.text('Report a problem'), findsOneWidget);
+    expect(find.text('Choose a reason'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Spam');
+    await tapVisibleText(tester, 'Submit report');
+    expect(find.text('Report submitted'), findsWidgets);
+
+    await tapVisibleText(tester, 'Back to safety source');
+    expect(find.text('Keep better talks going.'), findsOneWidget);
+  });
+
+  testWidgets('direct chat report can block Maya', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await tapVisibleText(tester, 'Chats');
+    await tapVisibleText(tester, 'Maya');
+
+    await tapVisibleText(tester, 'Report');
+    expect(find.text('Report Maya'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Harassment');
+    await tester.enterText(
+      find.byType(EditableText).last,
+      'Maya kept targeting me.',
+    );
+    await tester.pumpAndSettle();
+    await tapVisibleText(tester, 'Also block Maya');
+    await tapVisibleText(tester, 'Submit report');
+
+    expect(find.text('Report submitted'), findsWidgets);
+    expect(
+      find.text('Maya is blocked in this local demo session.'),
+      findsOneWidget,
+    );
+
+    await tapVisibleText(tester, 'Back to safety source');
+    expect(find.text('Maya blocked'), findsOneWidget);
+    expect(
+      find.text('Messages are disabled because you blocked Maya.'),
+      findsOneWidget,
+    );
+
+    await tapVisibleFinder(tester, find.byTooltip('Back to chats'));
+    expect(find.text('Blocked'), findsOneWidget);
   });
 
   testWidgets('create room selections carry into lobby and live room', (
@@ -211,6 +394,29 @@ void main() {
     expect(find.text('Leave room?'), findsOneWidget);
     await tapVisibleText(tester, 'Leave and see summary');
     expect(find.text('Room Summary'), findsOneWidget);
+  });
+
+  testWidgets('live room safety can mute and report room', (tester) async {
+    await tester.pumpWidget(const OpposeApp());
+    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
+    await enterDefaultLiveRoom(tester);
+
+    await tapVisibleText(tester, 'Safety');
+    expect(find.text('Room safety'), findsOneWidget);
+
+    await tapVisibleText(tester, 'Mute Raka');
+    expect(find.text('Unmute Raka'), findsOneWidget);
+    expect(find.text('Muted'), findsWidgets);
+
+    await tapVisibleText(tester, 'Report room');
+    expect(find.text('Report this room'), findsOneWidget);
+    await tapVisibleText(tester, 'Unsafe behavior');
+    await tapVisibleText(tester, 'Submit report');
+    expect(find.text('Report submitted'), findsWidgets);
+
+    await tapVisibleText(tester, 'Back to safety source');
+    expect(find.text('Daily Debate Room'), findsOneWidget);
   });
 
   testWidgets('AI drawer supports modes quick actions and prompts', (
@@ -353,6 +559,12 @@ Future<void> enterDefaultLiveRoom(WidgetTester tester) async {
   await tapVisibleText(tester, 'Create');
   await tapVisibleText(tester, 'Start room');
   await tapVisibleText(tester, 'Join room');
+}
+
+Future<void> goToRoute(WidgetTester tester, String route) async {
+  final context = tester.element(find.byType(Navigator).first);
+  GoRouter.of(context).go(route);
+  await tester.pumpAndSettle();
 }
 
 Future<void> leaveRoomForSummary(WidgetTester tester) async {
