@@ -1,5 +1,7 @@
 enum FriendStatus { online, offline, inRoom, typing }
 
+enum FriendRequestStatus { pending, accepted, declined }
+
 enum ConversationType { direct, group, room }
 
 enum MessageStatus { sending, sent, delivered, read, failed }
@@ -24,6 +26,8 @@ enum AIStatusValue {
 
 enum SummarySetting { off, privateToMe, sharedWithRoom }
 
+enum ReportTargetType { user, room, chat, general }
+
 enum ReportReason {
   harassment,
   spam,
@@ -31,6 +35,28 @@ enum ReportReason {
   hateOrDiscrimination,
   privacyConcern,
   other,
+}
+
+class ReportTarget {
+  const ReportTarget({
+    required this.id,
+    required this.displayName,
+    required this.type,
+    required this.source,
+  });
+
+  const ReportTarget.general()
+    : id = 'general',
+      displayName = 'a problem',
+      type = ReportTargetType.general,
+      source = 'unknown';
+
+  final String id;
+  final String displayName;
+  final ReportTargetType type;
+  final String source;
+
+  bool get isUser => type == ReportTargetType.user;
 }
 
 class OpposeUser {
@@ -67,6 +93,22 @@ class Friend {
   final FriendStatus status;
   final String? avatarAsset;
   final bool isBlocked;
+}
+
+class FriendRequest {
+  const FriendRequest({
+    required this.id,
+    required this.displayName,
+    required this.username,
+    required this.status,
+    this.avatarAsset,
+  });
+
+  final String id;
+  final String displayName;
+  final String username;
+  final FriendRequestStatus status;
+  final String? avatarAsset;
 }
 
 class Conversation {

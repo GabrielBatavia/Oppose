@@ -15,6 +15,10 @@ import '../state/room_setup/room_setup_controller.dart';
 import '../state/room_setup/room_setup_scope.dart';
 import '../state/room_summary/room_summary_controller.dart';
 import '../state/room_summary/room_summary_scope.dart';
+import '../state/safety/safety_controller.dart';
+import '../state/safety/safety_scope.dart';
+import '../state/social/social_controller.dart';
+import '../state/social/social_scope.dart';
 import '../theme/oppose_theme.dart';
 
 class OpposeApp extends StatefulWidget {
@@ -31,6 +35,8 @@ class _OpposeAppState extends State<OpposeApp> {
   late final LiveRoomController _liveRoomController;
   late final AIInteractionController _aiInteractionController;
   late final RoomSummaryController _roomSummaryController;
+  late final SafetyController _safetyController;
+  late final SocialController _socialController;
   late final GoRouter _router;
 
   @override
@@ -54,12 +60,20 @@ class _OpposeAppState extends State<OpposeApp> {
     _roomSummaryController = RoomSummaryController(
       analytics: const NoopAnalyticsService(),
     );
+    _safetyController = SafetyController(
+      analytics: const NoopAnalyticsService(),
+    );
+    _socialController = SocialController(
+      analytics: const NoopAnalyticsService(),
+    );
     _router = createAppRouter();
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _socialController.dispose();
+    _safetyController.dispose();
     _roomSummaryController.dispose();
     _aiInteractionController.dispose();
     _liveRoomController.dispose();
@@ -83,11 +97,17 @@ class _OpposeAppState extends State<OpposeApp> {
               controller: _aiInteractionController,
               child: RoomSummaryScope(
                 controller: _roomSummaryController,
-                child: MaterialApp.router(
-                  title: 'Oppose',
-                  debugShowCheckedModeBanner: false,
-                  theme: OpposeTheme.light,
-                  routerConfig: _router,
+                child: SafetyScope(
+                  controller: _safetyController,
+                  child: SocialScope(
+                    controller: _socialController,
+                    child: MaterialApp.router(
+                      title: 'Oppose',
+                      debugShowCheckedModeBanner: false,
+                      theme: OpposeTheme.light,
+                      routerConfig: _router,
+                    ),
+                  ),
                 ),
               ),
             ),
