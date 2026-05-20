@@ -14,7 +14,7 @@ class UsernameAvailabilityRow extends StatelessWidget {
     return StatusPill(
       label: switch (availability) {
         UsernameAvailability.empty => 'Choose a username',
-        UsernameAvailability.invalid => 'Use 3-20 letters, numbers, or _',
+        UsernameAvailability.invalid => 'Use 3-24 letters, numbers, or _',
         UsernameAvailability.checking => 'Checking username...',
         UsernameAvailability.available => 'Username available',
         UsernameAvailability.unavailable => 'Username already taken',

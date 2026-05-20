@@ -120,11 +120,20 @@ class _AIConsentScreenState extends State<AIConsentScreen> {
         const SizedBox(height: OpposeSpacing.xl),
         PrimaryButton(
           label: 'I understand',
+          isLoading: onboarding.isSavingAIConsent,
           onPressed: () async {
-            await onboarding.acceptAIConsent();
-            if (context.mounted) context.go(AppRoutes.home);
+            final ok = await onboarding.acceptAIConsent();
+            if (ok && context.mounted) context.go(AppRoutes.home);
           },
         ),
+        if (onboarding.errorMessage != null) ...[
+          const SizedBox(height: OpposeSpacing.md),
+          Text(
+            onboarding.errorMessage!,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
         const SizedBox(height: OpposeSpacing.md),
         SecondaryButton(
           label: 'Customize AI settings',

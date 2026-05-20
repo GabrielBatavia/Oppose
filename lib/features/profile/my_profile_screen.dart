@@ -27,8 +27,8 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = MockOpposeData.currentUser;
     final social = SocialScope.watch(context);
+    final user = social.currentUser;
     final safety = SafetyScope.watch(context);
 
     return OpposeScreen(
@@ -680,6 +680,7 @@ class ProfileEditSheet extends StatefulWidget {
 class _ProfileEditSheetState extends State<ProfileEditSheet> {
   late final TextEditingController _nameController;
   late final TextEditingController _taglineController;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -712,12 +713,16 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
         const SizedBox(height: OpposeSpacing.lg),
         PrimaryButton(
           label: 'Save profile',
-          onPressed: () {
-            widget.social.updateProfile(
+          isLoading: _isSaving,
+          onPressed: () async {
+            setState(() => _isSaving = true);
+            final ok = await widget.social.updateProfile(
               name: _nameController.text,
               newTagline: _taglineController.text,
             );
-            Navigator.of(context).pop();
+            if (!mounted) return;
+            setState(() => _isSaving = false);
+            if (ok) Navigator.of(context).pop();
           },
         ),
       ],

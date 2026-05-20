@@ -91,6 +91,18 @@ class UsernameSetupScreen extends StatelessWidget {
                   availability: onboarding.usernameAvailability,
                 ),
               ),
+              if (onboarding.errorMessage != null) ...[
+                const SizedBox(height: OpposeSpacing.sm),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    onboarding.errorMessage!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

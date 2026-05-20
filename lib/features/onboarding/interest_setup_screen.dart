@@ -70,19 +70,30 @@ class InterestSetupScreen extends StatelessWidget {
         const SizedBox(height: OpposeSpacing.xl),
         PrimaryButton(
           label: 'Continue',
+          isLoading: onboarding.isSavingInterests,
           onPressed: () async {
-            await onboarding.continueInterests(skipped: false);
-            if (context.mounted) context.go(AppRoutes.aiConsent);
+            final ok = await onboarding.continueInterests(skipped: false);
+            if (ok && context.mounted) context.go(AppRoutes.aiConsent);
           },
         ),
         const SizedBox(height: OpposeSpacing.md),
         SecondaryButton(
           label: 'Skip for now',
-          onPressed: () async {
-            await onboarding.continueInterests(skipped: true);
-            if (context.mounted) context.go(AppRoutes.aiConsent);
-          },
+          onPressed: onboarding.isSavingInterests
+              ? null
+              : () async {
+                  final ok = await onboarding.continueInterests(skipped: true);
+                  if (ok && context.mounted) context.go(AppRoutes.aiConsent);
+                },
         ),
+        if (onboarding.errorMessage != null) ...[
+          const SizedBox(height: OpposeSpacing.md),
+          Text(
+            onboarding.errorMessage!,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
       ],
     );
   }
