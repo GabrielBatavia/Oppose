@@ -3,6 +3,8 @@ import helmet from '@fastify/helmet';
 import Fastify from 'fastify';
 
 import { config } from './config.js';
+import { disconnectPrisma } from './db/prisma.js';
+import { registerUserRoutes } from './routes/users.js';
 
 export function buildServer() {
   const server = Fastify({
@@ -29,8 +31,14 @@ export function buildServer() {
     return {
       name: 'oppose-backend',
       version: '0.1.0',
-      sprint: 12,
+      sprint: 13,
     };
+  });
+
+  server.register(registerUserRoutes);
+
+  server.addHook('onClose', async () => {
+    await disconnectPrisma();
   });
 
   return server;

@@ -1,6 +1,6 @@
 # Oppose Backend
 
-Sprint 12 backend foundation for turning the Flutter mock MVP into a real backend-backed app.
+Sprint 13 backend foundation for turning the Flutter mock MVP into a real backend-backed app.
 
 ## Stack
 
@@ -16,6 +16,8 @@ npm install
 Copy-Item .env.example .env
 docker compose up -d postgres
 npm run prisma:generate
+npm run prisma:migrate:dev
+npm run db:seed
 npm run dev
 ```
 
@@ -25,15 +27,50 @@ Health check:
 curl http://localhost:4000/health
 ```
 
+Current user smoke check after seeding:
+
+```bash
+curl -H "x-dev-user-id: 00000000-0000-4000-8000-000000000001" http://localhost:4000/me
+```
+
+## Development Auth
+
+Sprint 13 uses development-only auth so profile persistence can move forward before choosing Supabase, Firebase, Clerk, or a custom auth provider.
+
+Protected endpoints require this header:
+
+```text
+x-dev-user-id: 00000000-0000-4000-8000-000000000001
+```
+
+The seeded dev user matches the Flutter mock identity:
+
+- username: `thinkwithbima`
+- display name: `Bima's Friend`
+- interests: `Technology`, `Friendship`, `Food`
+- AI consent: accepted
+
+Do not use `x-dev-user-id` as a production auth pattern. Production auth must derive current user from a verified provider token/session.
+
+## Sprint 13 Endpoints
+
+- `GET /users/check-username?username=thinkwithbima`
+- `GET /me`
+- `PATCH /me/profile`
+- `PATCH /me/interests`
+- `POST /me/ai-consent`
+
 ## Validation
 
 ```bash
 npm run check
 npm run build
+npx prisma validate
+docker compose config
 ```
 
 ## Notes
 
-- This backend is a foundation only. It exposes a health endpoint and schema/contracts for future implementation.
+- This backend is still a foundation. Sprint 13 adds development auth and profile persistence endpoints only.
 - Do not commit `.env` or real secrets.
 - AI providers and LiveKit admin keys must stay server-side.
