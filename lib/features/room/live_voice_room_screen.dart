@@ -10,6 +10,7 @@ import '../../state/ai_interaction/ai_interaction_scope.dart';
 import '../../state/live_room/live_room_scope.dart';
 import '../../state/room_setup/room_setup_controller.dart';
 import '../../state/room_setup/room_setup_scope.dart';
+import '../../state/safety/safety_scope.dart';
 import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import '../../types/domain_models.dart';
@@ -22,6 +23,7 @@ import 'widgets/room_control_bar.dart';
 import 'widgets/room_invite_sheet.dart';
 import 'widgets/room_participant_card.dart';
 import 'widgets/room_privacy_pill.dart';
+import 'widgets/room_safety_sheet.dart';
 import 'widgets/room_topic_card.dart';
 
 class LiveVoiceRoomScreen extends StatefulWidget {
@@ -55,7 +57,14 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
     final setup = RoomSetupScope.watch(context);
     final liveRoom = LiveRoomScope.watch(context);
     final ai = AIInteractionScope.watch(context);
-    final participants = liveRoom.participantsFor(setup, aiStatus: ai.status);
+    final safety = SafetyScope.watch(context);
+    final participants = liveRoom
+        .participantsFor(setup, aiStatus: ai.status)
+        .map(
+          (participant) =>
+              _withSafetyMute(participant, safety.isMuted(participant.id)),
+        )
+        .toList(growable: false);
     final aiActive = setup.selectedAIMode != AIMode.off && !ai.isOff;
 
     return OpposeScreen(
@@ -129,6 +138,38 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
               child: const AIControlDrawer(),
             );
           },
+          onSafety: () {
+            showOpposeBottomSheet(
+              context: context,
+              child: RoomSafetySheet(
+                participants: participants,
+                onReportRoom: () {
+                  safety.prepareReport(
+                    target: ReportTarget(
+                      id: 'room_${setup.selectedRoomType.name}',
+                      displayName: setup.roomTitle,
+                      type: ReportTargetType.room,
+                      source: 'live_room',
+                    ),
+                    returnRoute: AppRoutes.liveRoom,
+                  );
+                  context.go(AppRoutes.report);
+                },
+                onReportParticipant: (participant) {
+                  safety.prepareReport(
+                    target: ReportTarget(
+                      id: participant.id,
+                      displayName: participant.displayName,
+                      type: ReportTargetType.user,
+                      source: 'live_room',
+                    ),
+                    returnRoute: AppRoutes.liveRoom,
+                  );
+                  context.go(AppRoutes.report);
+                },
+              ),
+            );
+          },
           onInvite: () {
             liveRoom.trackInviteClicked();
             showOpposeBottomSheet(
@@ -150,6 +191,19 @@ class _LiveVoiceRoomScreenState extends State<LiveVoiceRoomScreen> {
           },
         ),
       ],
+    );
+  }
+
+  RoomParticipant _withSafetyMute(RoomParticipant participant, bool isMuted) {
+    if (!isMuted) return participant;
+    return RoomParticipant(
+      id: participant.id,
+      displayName: participant.displayName,
+      role: participant.role,
+      avatarAsset: participant.avatarAsset,
+      isAI: participant.isAI,
+      isSpeaking: participant.isSpeaking,
+      isMuted: participant.isMuted || isMuted,
     );
   }
 }

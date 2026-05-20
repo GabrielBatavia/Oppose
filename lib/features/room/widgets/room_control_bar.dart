@@ -11,6 +11,7 @@ class RoomControlBar extends StatelessWidget {
     required this.onMute,
     required this.onChat,
     required this.onAskAI,
+    required this.onSafety,
     required this.onInvite,
     required this.onLeave,
   });
@@ -20,6 +21,7 @@ class RoomControlBar extends StatelessWidget {
   final VoidCallback onMute;
   final VoidCallback onChat;
   final VoidCallback onAskAI;
+  final VoidCallback onSafety;
   final VoidCallback onInvite;
   final VoidCallback onLeave;
 
@@ -50,6 +52,11 @@ class RoomControlBar extends StatelessWidget {
               : Icons.power_settings_new_rounded,
           enabled: aiEnabled,
           onPressed: onAskAI,
+        ),
+        RoomControlButton(
+          label: 'Safety',
+          icon: Icons.shield_outlined,
+          onPressed: onSafety,
         ),
         RoomControlButton(
           label: 'Invite',

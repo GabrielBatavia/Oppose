@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/routes/app_routes.dart';
+import '../../components/core/paper_card.dart';
+import '../../components/core/status_pill.dart';
 import '../../components/layout/oppose_screen.dart';
 import '../../state/messaging/messaging_scope.dart';
 import '../../state/mock_data/mock_oppose_data.dart';
+import '../../state/safety/safety_scope.dart';
+import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import '../../types/domain_models.dart';
 import 'widgets/ai_message_card.dart';
@@ -36,8 +40,11 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
   @override
   Widget build(BuildContext context) {
     final messaging = MessagingScope.watch(context);
+    final safety = SafetyScope.watch(context);
     final conversation = messaging.selectedConversation;
     final messages = messaging.selectedMessages;
+    final reportUserId = _reportUserId(conversation);
+    final isBlocked = safety.isBlocked(reportUserId);
 
     return OpposeScreen(
       showBottomNavigation: true,
@@ -51,6 +58,10 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
           },
         ),
         const SizedBox(height: OpposeSpacing.xl),
+        if (isBlocked) ...[
+          _BlockedChatCard(name: conversation.title),
+          const SizedBox(height: OpposeSpacing.lg),
+        ],
         for (final message in messages) ...[
           ChatBubble(
             message: message,
@@ -87,11 +98,67 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                 context.go(AppRoutes.createRoom);
               },
             ),
+            QuickActionButton(
+              label: 'Report',
+              icon: Icons.shield_outlined,
+              onPressed: () {
+                safety.prepareReport(
+                  target: ReportTarget(
+                    id: reportUserId,
+                    displayName: conversation.title,
+                    type: ReportTargetType.user,
+                    source: 'direct_chat',
+                  ),
+                  returnRoute: AppRoutes.directChat,
+                );
+                context.go(AppRoutes.report);
+              },
+            ),
           ],
         ),
         const SizedBox(height: OpposeSpacing.xl),
-        MessageInputBar(onSend: messaging.sendMessage),
+        if (isBlocked)
+          PaperCard(
+            color: OpposeColors.indigo.withValues(alpha: 0.08),
+            child: Text(
+              'Messages are disabled because you blocked ${conversation.title}.',
+            ),
+          )
+        else
+          MessageInputBar(onSend: messaging.sendMessage),
       ],
+    );
+  }
+
+  String _reportUserId(Conversation conversation) {
+    return conversation.id == 'maya_direct' ? 'maya' : conversation.id;
+  }
+}
+
+class _BlockedChatCard extends StatelessWidget {
+  const _BlockedChatCard({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return PaperCard(
+      color: OpposeColors.mint.withValues(alpha: 0.14),
+      borderColor: OpposeColors.mint,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StatusPill(
+            label: '$name blocked',
+            icon: Icons.block_rounded,
+            color: OpposeColors.maroon,
+          ),
+          const SizedBox(height: OpposeSpacing.md),
+          const Text(
+            'You can still review the conversation, but sending is paused locally.',
+          ),
+        ],
+      ),
     );
   }
 }

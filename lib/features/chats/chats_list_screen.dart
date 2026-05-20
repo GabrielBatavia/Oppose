@@ -9,7 +9,9 @@ import '../../components/inputs/oppose_text_input.dart';
 import '../../components/layout/oppose_header.dart';
 import '../../components/layout/oppose_screen.dart';
 import '../../state/messaging/messaging_scope.dart';
+import '../../state/safety/safety_scope.dart';
 import '../../theme/oppose_spacing.dart';
+import '../../types/domain_models.dart';
 import 'widgets/chat_list_item.dart';
 
 class ChatsListScreen extends StatefulWidget {
@@ -34,6 +36,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     final messaging = MessagingScope.watch(context);
+    final safety = SafetyScope.watch(context);
     final filtered = messaging.filteredConversations;
 
     return OpposeScreen(
@@ -89,6 +92,8 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
           for (final conversation in filtered) ...[
             ChatListItem(
               conversation: conversation,
+              isBlocked:
+                  conversation.id == 'maya_direct' && safety.isBlocked('maya'),
               onTap: () {
                 messaging.openConversation(conversation.id);
                 context.go(AppRoutes.directChat);
@@ -99,7 +104,18 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
         const SizedBox(height: OpposeSpacing.xl),
         SecondaryButton(
           label: 'Open report flow',
-          onPressed: () => context.go(AppRoutes.report),
+          onPressed: () {
+            safety.prepareReport(
+              target: const ReportTarget(
+                id: 'chats_general',
+                displayName: 'Chats',
+                type: ReportTargetType.general,
+                source: 'chats_list',
+              ),
+              returnRoute: AppRoutes.chats,
+            );
+            context.go(AppRoutes.report);
+          },
         ),
       ],
     );

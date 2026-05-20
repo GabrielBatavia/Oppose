@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../assets/oppose_assets.dart';
 import '../../../components/core/avatar.dart';
 import '../../../components/core/paper_card.dart';
+import '../../../components/core/status_pill.dart';
 import '../../../features/home/widgets/unread_badge.dart';
+import '../../../theme/oppose_colors.dart';
 import '../../../theme/oppose_spacing.dart';
 import '../../../types/domain_models.dart';
 import 'conversation_type_pill.dart';
@@ -13,10 +15,12 @@ class ChatListItem extends StatelessWidget {
     super.key,
     required this.conversation,
     required this.onTap,
+    this.isBlocked = false,
   });
 
   final Conversation conversation;
   final VoidCallback onTap;
+  final bool isBlocked;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +62,19 @@ class ChatListItem extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: OpposeSpacing.sm),
-                  ConversationTypePill(type: conversation.type),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ConversationTypePill(type: conversation.type),
+                      if (isBlocked)
+                        const StatusPill(
+                          label: 'Blocked',
+                          icon: Icons.block_rounded,
+                          color: OpposeColors.maroon,
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
