@@ -60,7 +60,9 @@ class _AIControlDrawerState extends State<AIControlDrawer> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: OpposeSpacing.xs),
-                  const Text('AI responds only when asked and stays visible.'),
+                  const Text(
+                    'AI responds only when asked, stays visible, and keeps memory off in this demo.',
+                  ),
                   const SizedBox(height: OpposeSpacing.md),
                   AIStatusPill(status: ai.status),
                 ],

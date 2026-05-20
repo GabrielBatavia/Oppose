@@ -21,11 +21,13 @@ class MockRoomStateCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Mock room state',
+            'Demo room controls',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: OpposeSpacing.xs),
-          const Text('Tap a participant to change the active speaker.'),
+          const Text(
+            'Local demo controls: tap a participant to change the active speaker.',
+          ),
           const SizedBox(height: OpposeSpacing.md),
           Wrap(
             spacing: 8,
