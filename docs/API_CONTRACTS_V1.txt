@@ -1,0 +1,449 @@
+OPPOSE API CONTRACTS V1
+Date: 2026-05-19
+
+Purpose:
+Draft backend API contract for moving Oppose from local mock state to real backend services. This is a contract planning document, not a completed backend implementation.
+
+Base URL local:
+http://localhost:4000
+
+Authentication:
+- All private endpoints require Authorization: Bearer <token> once auth is implemented.
+- Sprint 12 backend skeleton only exposes unauthenticated /health and /version.
+- Backend must derive current user from the token, not from client-provided user IDs.
+
+Response format recommendation:
+- Success: JSON object or array as endpoint requires.
+- Error: { "error": { "code": string, "message": string, "details"?: object } }
+
+================================================================================
+SYSTEM
+================================================================================
+
+GET /health
+Purpose: runtime health check.
+Auth: none.
+Response:
+{
+  "ok": true,
+  "service": "oppose-backend",
+  "environment": "development",
+  "timestamp": "2026-05-19T00:00:00.000Z"
+}
+
+GET /version
+Purpose: backend version metadata.
+Auth: none.
+Response:
+{
+  "name": "oppose-backend",
+  "version": "0.1.0",
+  "sprint": 12
+}
+
+================================================================================
+AUTH AND PROFILE
+================================================================================
+
+POST /auth/session
+Purpose: exchange provider token/session for backend user context.
+Request:
+{
+  "provider": "supabase|firebase|clerk|custom",
+  "providerToken": "string"
+}
+Response:
+{
+  "user": UserDto,
+  "isNewUser": true
+}
+
+GET /me
+Purpose: get current user profile.
+Response: UserDto
+
+PATCH /me/profile
+Purpose: update profile identity.
+Request:
+{
+  "displayName": "Bima's Friend",
+  "username": "thinkwithbima",
+  "avatarUrl": "https://...",
+  "language": "en"
+}
+Response: UserDto
+
+PATCH /me/interests
+Purpose: replace current user interests.
+Request:
+{
+  "interests": ["Technology", "Friendship", "Food"]
+}
+Response:
+{
+  "interests": ["Technology", "Friendship", "Food"]
+}
+
+POST /me/ai-consent
+Purpose: record AI consent acceptance.
+Request:
+{
+  "accepted": true,
+  "version": "2026-05-19"
+}
+Response: UserDto
+
+GET /users/check-username?username=thinkwithbima
+Purpose: username availability check.
+Response:
+{
+  "username": "thinkwithbima",
+  "available": true
+}
+
+================================================================================
+SOCIAL GRAPH
+================================================================================
+
+GET /friends
+Purpose: list accepted friends and safety status.
+Response:
+[
+  FriendDto
+]
+
+GET /friend-requests
+Purpose: list incoming and outgoing pending requests.
+Response:
+{
+  "incoming": [FriendRequestDto],
+  "outgoing": [FriendRequestDto]
+}
+
+POST /friend-requests
+Purpose: send friend request.
+Request:
+{
+  "username": "mayaTalks"
+}
+Response: FriendRequestDto
+
+POST /friend-requests/{id}/accept
+Purpose: accept incoming request.
+Response: FriendDto
+
+POST /friend-requests/{id}/decline
+Purpose: decline incoming request.
+Response:
+{
+  "ok": true
+}
+
+POST /users/{id}/block
+Purpose: block user. Backend must enforce block in direct chat and invite flows.
+Response:
+{
+  "ok": true,
+  "blockedUserId": "uuid"
+}
+
+DELETE /users/{id}/block
+Purpose: unblock user.
+Response:
+{
+  "ok": true
+}
+
+POST /users/{id}/mute
+Purpose: mute user locally/account-level depending product policy.
+Request:
+{
+  "expiresAt": null
+}
+Response:
+{
+  "ok": true,
+  "mutedUserId": "uuid"
+}
+
+DELETE /users/{id}/mute
+Purpose: unmute user.
+Response:
+{
+  "ok": true
+}
+
+================================================================================
+CHATS
+================================================================================
+
+GET /conversations
+Purpose: list current user's conversations.
+Response: [ConversationDto]
+
+POST /conversations
+Purpose: create direct/group conversation.
+Request:
+{
+  "type": "DIRECT|GROUP",
+  "participantUserIds": ["uuid"]
+}
+Response: ConversationDto
+
+GET /conversations/{id}/messages?cursor=&limit=50
+Purpose: list messages.
+Response:
+{
+  "items": [MessageDto],
+  "nextCursor": "string|null"
+}
+
+POST /conversations/{id}/messages
+Purpose: send message.
+Request:
+{
+  "body": "Let us compare both sides."
+}
+Response: MessageDto
+
+POST /conversations/{id}/read
+Purpose: mark conversation read.
+Request:
+{
+  "lastReadMessageId": "uuid"
+}
+Response:
+{
+  "ok": true
+}
+
+================================================================================
+ROOMS
+================================================================================
+
+POST /rooms
+Purpose: create room/lobby.
+Request:
+{
+  "roomType": "DAILY_DEBATE",
+  "topic": "Is remote work good for the future?",
+  "privacy": "FRIENDS_ONLY",
+  "aiMode": "QUIET_HELPER",
+  "summarySetting": "PRIVATE_TO_CREATOR",
+  "inviteeUserIds": ["uuid"]
+}
+Response: RoomDto
+
+GET /rooms/{id}
+Purpose: get room detail for members.
+Response: RoomDto
+
+PATCH /rooms/{id}
+Purpose: update lobby settings before live.
+Request:
+{
+  "topic": "string",
+  "aiMode": "BRAINSTORMER",
+  "summarySetting": "SHARED_WITH_ROOM"
+}
+Response: RoomDto
+
+POST /rooms/{id}/invite
+Purpose: invite friend to room.
+Request:
+{
+  "inviteeUserId": "uuid"
+}
+Response: RoomInviteDto
+
+POST /rooms/{id}/join
+Purpose: join room membership at app level.
+Response: RoomDto
+
+POST /rooms/{id}/leave
+Purpose: leave room membership at app level.
+Response:
+{
+  "ok": true
+}
+
+POST /rooms/{id}/end
+Purpose: host ends room.
+Response: RoomDto
+
+POST /rooms/{id}/livekit-token
+Purpose: mint scoped LiveKit token for validated room member.
+Response:
+{
+  "livekitUrl": "wss://...",
+  "token": "jwt",
+  "roomName": "oppose-room-uuid"
+}
+
+================================================================================
+AI
+================================================================================
+
+POST /ai/quick-action
+Purpose: user-triggered AI quick action.
+Rules: AI consent required. Room/conversation access required.
+Request:
+{
+  "sourceType": "room|conversation",
+  "sourceId": "uuid",
+  "action": "SUMMARIZE_SO_FAR|SUGGEST_BETTER_QUESTION|EXPLAIN_BOTH_SIDES|TRANSLATE",
+  "aiMode": "BRAINSTORMER"
+}
+Response:
+{
+  "aiRequestId": "uuid",
+  "response": "string"
+}
+
+POST /ai/prompt
+Purpose: user-triggered AI prompt.
+Request:
+{
+  "sourceType": "room|conversation",
+  "sourceId": "uuid",
+  "prompt": "How can we make this fair?",
+  "aiMode": "QUIET_HELPER"
+}
+Response:
+{
+  "aiRequestId": "uuid",
+  "response": "string"
+}
+
+POST /rooms/{id}/summary/generate
+Purpose: generate room summary after room ends if summary setting allows.
+Response: RoomSummaryDto
+
+================================================================================
+SUMMARIES
+================================================================================
+
+GET /rooms/{id}/summary
+Purpose: get summary visible to current user.
+Response: RoomSummaryDto|null
+
+POST /rooms/{id}/summary/save
+Purpose: save summary for current user.
+Response: RoomSummaryDto
+
+POST /rooms/{id}/summary/share
+Purpose: share summary with room members if allowed.
+Response: RoomSummaryDto
+
+DELETE /rooms/{id}/summary
+Purpose: delete current user's summary visibility/save state.
+Response:
+{
+  "ok": true
+}
+
+================================================================================
+SAFETY
+================================================================================
+
+POST /reports
+Purpose: submit private report to moderation system.
+Request:
+{
+  "targetType": "USER|ROOM|CHAT|MESSAGE|GENERAL",
+  "targetId": "uuid|null",
+  "reason": "HARASSMENT|SPAM|UNSAFE_BEHAVIOR|HATE_OR_DISCRIMINATION|PRIVACY_CONCERN|OTHER",
+  "details": "optional text",
+  "alsoBlock": true
+}
+Response:
+{
+  "reportId": "uuid",
+  "status": "SUBMITTED",
+  "blocked": true
+}
+
+================================================================================
+DTO NOTES
+================================================================================
+
+UserDto:
+- id
+- username
+- displayName
+- avatarUrl
+- language
+- interests
+- aiConsentAccepted
+
+FriendDto:
+- id
+- username
+- displayName
+- avatarUrl
+- status/presence later
+- isBlocked
+- isMuted
+
+ConversationDto:
+- id
+- type
+- title
+- participantNames
+- lastMessage
+- updatedAt
+- unreadCount
+
+MessageDto:
+- id
+- conversationId
+- senderName
+- senderType
+- body
+- createdAt
+- status
+
+RoomDto:
+- id
+- title
+- topic
+- roomType
+- privacy
+- status
+- aiMode
+- summarySetting
+- participants
+- invites
+
+RoomSummaryDto:
+- id
+- roomId
+- title
+- durationLabel
+- visibility
+- takeaways
+- bestArguments
+- funnyMoments
+- openQuestions
+
+================================================================================
+WEBSOCKET EVENTS DRAFT
+================================================================================
+
+Client -> server:
+- conversation.typing.start
+- conversation.typing.stop
+- room.presence.join
+- room.presence.leave
+
+Server -> client:
+- presence.friend.online
+- presence.friend.offline
+- conversation.message.created
+- conversation.typing.changed
+- room.participant.joined
+- room.participant.left
+- room.ai.status_changed
+- room.summary.ready
+
+WebSocket auth must validate the same token as REST.

@@ -1,0 +1,159 @@
+OPPOSE DATABASE SCHEMA V1
+Date: 2026-05-19
+
+Purpose:
+Human-readable companion to `backend/prisma/schema.prisma`. This describes the first production schema draft for moving Oppose from local mock state to persistent backend state.
+
+Canonical schema file:
+Oppose/backend/prisma/schema.prisma
+
+Database:
+PostgreSQL
+
+ORM:
+Prisma
+
+================================================================================
+CORE ENTITIES
+================================================================================
+
+users
+- Stores identity, username, profile display, language, AI consent state, and auth provider mapping.
+- Backend user ID is the stable primary key for all private data.
+- AI consent must be checked server-side before AI endpoints run.
+
+user_interests
+- Stores profile/onboarding interests as rows for filtering and future recommendations.
+
+friendships
+- Stores friend request lifecycle: pending, accepted, declined, blocked.
+- Direct block enforcement is handled by user_blocks, but friendship status can preserve social history.
+
+user_blocks
+- Stores blocker -> blocked relationships.
+- Used to prevent direct chat sends, room invites, and relevant visibility.
+
+user_mutes
+- Stores muter -> muted relationships.
+- Used for local/account-level notification and audio suppression behavior.
+
+conversations
+- Stores direct, group, and room-linked conversations.
+
+conversation_participants
+- Stores conversation membership, role, and last-read message pointer.
+
+messages
+- Stores persisted chat messages.
+- sender_type separates user, AI, and system messages.
+
+rooms
+- Stores room lobby/live/ended lifecycle, topic, type, privacy, AI mode, summary setting, and LiveKit room name.
+
+room_participants
+- Stores room membership and lifecycle timestamps.
+
+room_invites
+- Stores invite lifecycle for room invites.
+
+ai_requests
+- Stores server-side AI request metadata.
+- Redacted prompt/response fields are intentionally named to avoid accidental raw sensitive retention.
+
+room_summaries
+- Stores generated summary content and visibility.
+- content_json supports structured takeaways, best arguments, funny moments, and open questions.
+
+reports
+- Stores private report submissions.
+- status supports moderation queue lifecycle.
+
+moderation_actions
+- Stores admin/moderation actions later.
+
+device_tokens
+- Stores FCM/APNS device tokens later.
+
+================================================================================
+IMPORTANT ACCESS RULES
+================================================================================
+
+Users:
+- A user can read and update only their own private profile fields.
+- Public profile exposure should be explicitly designed later.
+
+Friends:
+- A user can see their own friendships and requests.
+- Users cannot create duplicate friend request pairs.
+
+Blocks:
+- A block prevents direct messages from blocked user to blocker.
+- A block prevents room invites where product policy requires it.
+- Blocks should not reveal unnecessary information to blocked users.
+
+Chats:
+- A user can read a conversation only if they are a participant.
+- A user can send a message only if they are a participant and not blocked by recipient policy.
+
+Rooms:
+- A user can read a room only if they are a participant/invitee or privacy allows future public access.
+- LiveKit token generation requires room membership validation.
+- AI mode and summary setting must be stored with the room.
+
+AI:
+- AI endpoints require current user AI consent.
+- AI endpoints require access to the source room/conversation.
+- AI requests should not store raw sensitive data until retention policy is approved.
+
+Summaries:
+- Private summaries are visible only to owner.
+- Shared summaries are visible only to room participants.
+- Delete must remove or hide summary from the current user according to policy.
+
+Reports:
+- Reports are private to reporter and moderation/admin systems.
+- Normal users cannot browse reports.
+- Moderation actions require admin authorization later.
+
+================================================================================
+SCHEMA MIGRATION NOTES
+================================================================================
+
+Sprint 12 creates the schema draft only.
+
+Before production migrations:
+- confirm auth provider ID shape
+- decide username normalization rules
+- decide whether phone/email can both be null
+- decide retention policy for AI requests
+- decide summary delete semantics
+- decide report target polymorphism strategy
+- add indexes based on query patterns
+- add seed data for local development
+
+Recommended first indexes after validation:
+- users.username
+- users.authProviderId
+- messages.conversationId + createdAt
+- conversations.updatedAt
+- room_participants.roomId
+- room_invites.inviteeId + status
+- reports.status + createdAt
+- ai_requests.userId + createdAt
+
+================================================================================
+RELATION TO CURRENT FLUTTER MOCK STATE
+================================================================================
+
+Current local controllers map to backend domains:
+
+OnboardingController -> users, user_interests, ai consent fields
+MessagingController -> conversations, conversation_participants, messages
+RoomSetupController -> rooms, room_invites, room_participants
+LiveRoomController -> rooms, room_participants, LiveKit events
+AIInteractionController -> ai_requests and AI endpoints
+RoomSummaryController -> room_summaries
+SafetyController -> reports, user_blocks, user_mutes
+SocialController -> friendships, user_blocks, user_mutes
+
+Migration should happen one controller/repository at a time.

@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+  ROOM
+}
+
+enum ConversationRole {
+  MEMBER
+  ADMIN
+  OWNER
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum SenderType {
+  USER
+  AI
+  SYSTEM
+}
+
+enum RoomType {
+  QUICK_HANGOUT
+  DAILY_DEBATE
+  STUDY_TALK
+  CUSTOM
+}
+
+enum RoomPrivacy {
+  FRIENDS_ONLY
+  PRIVATE
+  PUBLIC_LATER
+}
+
+enum RoomStatus {
+  LOBBY
+  LIVE
+  ENDED
+}
+
+enum RoomParticipantRole {
+  HOST
+  FRIEND
+  GUEST
+}
+
+enum RoomInviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum AIMode {
+  OFF
+  QUIET_HELPER
+  BRAINSTORMER
+  TRANSLATOR
+  MODERATOR_LITE
+}
+
+enum AIRequestType {
+  QUICK_ACTION
+  PROMPT
+  SUMMARY
+  TRANSLATE
+  MODERATION_ASSIST
+}
+
+enum AIRequestStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum SummarySetting {
+  OFF
+  PRIVATE_TO_CREATOR
+  SHARED_WITH_ROOM
+}
+
+enum SummaryVisibility {
+  PRIVATE_TO_USER
+  SHARED_WITH_ROOM
+}
+
+enum ReportTargetType {
+  USER
+  ROOM
+  CHAT
+  MESSAGE
+  GENERAL
+}
+
+enum ReportReason {
+  HARASSMENT
+  SPAM
+  UNSAFE_BEHAVIOR
+  HATE_OR_DISCRIMINATION
+  PRIVACY_CONCERN
+  OTHER
+}
+
+enum ReportStatus {
+  SUBMITTED
+  TRIAGED
+  ACTIONED
+  DISMISSED
+}
+
+enum ModerationActionType {
+  WARN
+  SUSPEND
+  REMOVE_CONTENT
+  DISMISS
+  ESCALATE
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+}
+
+model User {
+  id                 String    @id @default(uuid()) @db.Uuid
+  authProviderId     String?   @unique
+  email              String?   @unique
+  phone              String?   @unique
+  username           String    @unique
+  displayName        String
+  avatarUrl          String?
+  language           String    @default("en")
+  aiConsentAccepted  Boolean   @default(false)
+  aiConsentVersion   String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  interests                UserInterest[]
+  sentFriendRequests       Friendship[]              @relation("FriendRequester")
+  receivedFriendRequests   Friendship[]              @relation("FriendAddressee")
+  blocksInitiated          UserBlock[]               @relation("UserBlocksInitiated")
+  blocksReceived           UserBlock[]               @relation("UserBlocksReceived")
+  mutesInitiated           UserMute[]                @relation("UserMutesInitiated")
+  mutesReceived            UserMute[]                @relation("UserMutesReceived")
+  createdConversations     Conversation[]            @relation("ConversationCreator")
+  conversationParticipants ConversationParticipant[]
+  sentMessages             Message[]                 @relation("UserMessages")
+  createdRooms             Room[]                    @relation("RoomCreator")
+  roomParticipants         RoomParticipant[]
+  sentRoomInvites          RoomInvite[]              @relation("RoomInviteSender")
+  receivedRoomInvites      RoomInvite[]              @relation("RoomInviteReceiver")
+  aiRequests               AIRequest[]
+  ownedSummaries           RoomSummary[]             @relation("SummaryOwner")
+  reportsFiled             Report[]                  @relation("ReportReporter")
+  moderationActions        ModerationAction[]        @relation("ModerationAdmin")
+  deviceTokens             DeviceToken[]
+}
+
+model UserInterest {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  interest  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, interest])
+}
+
+model Friendship {
+  id          String           @id @default(uuid()) @db.Uuid
+  requesterId String           @db.Uuid
+  addresseeId String           @db.Uuid
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  requester User @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+}
+
+model UserBlock {
+  id        String   @id @default(uuid()) @db.Uuid
+  blockerId String   @db.Uuid
+  blockedId String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  blocker User @relation("UserBlocksInitiated", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("UserBlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
+
+model UserMute {
+  id        String    @id @default(uuid()) @db.Uuid
+  muterId   String    @db.Uuid
+  mutedId   String    @db.Uuid
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  muter User @relation("UserMutesInitiated", fields: [muterId], references: [id], onDelete: Cascade)
+  muted User @relation("UserMutesReceived", fields: [mutedId], references: [id], onDelete: Cascade)
+
+  @@unique([muterId, mutedId])
+}
+
+model Conversation {
+  id          String           @id @default(uuid()) @db.Uuid
+  type        ConversationType
+  title       String?
+  createdById String           @db.Uuid
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  createdBy    User                      @relation("ConversationCreator", fields: [createdById], references: [id])
+  participants ConversationParticipant[]
+  messages     Message[]
+  aiRequests   AIRequest[]
+}
+
+model ConversationParticipant {
+  id                String           @id @default(uuid()) @db.Uuid
+  conversationId    String           @db.Uuid
+  userId            String           @db.Uuid
+  role              ConversationRole @default(MEMBER)
+  lastReadMessageId String?          @db.Uuid
+  joinedAt          DateTime         @default(now())
+
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadMessage Message?     @relation("LastReadMessage", fields: [lastReadMessageId], references: [id])
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id             String        @id @default(uuid()) @db.Uuid
+  conversationId String        @db.Uuid
+  senderId       String?       @db.Uuid
+  senderType     SenderType
+  body           String
+  status         MessageStatus @default(SENT)
+  createdAt      DateTime      @default(now())
+  deletedAt      DateTime?
+
+  conversation Conversation              @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?                     @relation("UserMessages", fields: [senderId], references: [id])
+  readBy       ConversationParticipant[] @relation("LastReadMessage")
+}
+
+model Room {
+  id              String         @id @default(uuid()) @db.Uuid
+  title           String
+  topic           String
+  roomType        RoomType
+  privacy         RoomPrivacy    @default(FRIENDS_ONLY)
+  status          RoomStatus     @default(LOBBY)
+  createdById     String         @db.Uuid
+  aiMode          AIMode         @default(QUIET_HELPER)
+  summarySetting  SummarySetting @default(PRIVATE_TO_CREATOR)
+  livekitRoomName String?        @unique
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  createdBy    User              @relation("RoomCreator", fields: [createdById], references: [id])
+  participants RoomParticipant[]
+  invites      RoomInvite[]
+  aiRequests   AIRequest[]
+  summaries    RoomSummary[]
+}
+
+model RoomParticipant {
+  id          String              @id @default(uuid()) @db.Uuid
+  roomId      String              @db.Uuid
+  userId      String              @db.Uuid
+  role        RoomParticipantRole @default(FRIEND)
+  joinedAt    DateTime?
+  leftAt      DateTime?
+  mutedBySelf Boolean             @default(false)
+  removedAt   DateTime?
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+}
+
+model RoomInvite {
+  id          String           @id @default(uuid()) @db.Uuid
+  roomId      String           @db.Uuid
+  inviterId   String           @db.Uuid
+  inviteeId   String           @db.Uuid
+  status      RoomInviteStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  respondedAt DateTime?
+
+  room    Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  inviter User @relation("RoomInviteSender", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee User @relation("RoomInviteReceiver", fields: [inviteeId], references: [id], onDelete: Cascade)
+}
+
+model AIRequest {
+  id                String          @id @default(uuid()) @db.Uuid
+  userId            String          @db.Uuid
+  roomId            String?         @db.Uuid
+  conversationId    String?         @db.Uuid
+  requestType       AIRequestType
+  aiMode            AIMode
+  promptRedacted    String?
+  responseRedacted  String?
+  status            AIRequestStatus @default(PENDING)
+  createdAt         DateTime        @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room         Room?         @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+}
+
+model RoomSummary {
+  id          String            @id @default(uuid()) @db.Uuid
+  roomId      String            @db.Uuid
+  ownerId     String            @db.Uuid
+  title       String
+  visibility  SummaryVisibility
+  contentJson Json
+  savedByUser Boolean           @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  room  Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  owner User @relation("SummaryOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id         String           @id @default(uuid()) @db.Uuid
+  reporterId String           @db.Uuid
+  targetType ReportTargetType
+  targetId   String?          @db.Uuid
+  reason     ReportReason
+  details    String?
+  status     ReportStatus     @default(SUBMITTED)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  reporter          User               @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  moderationActions ModerationAction[]
+}
+
+model ModerationAction {
+  id             String               @id @default(uuid()) @db.Uuid
+  reportId       String?              @db.Uuid
+  actorAdminId   String?              @db.Uuid
+  targetUserId   String?              @db.Uuid
+  actionType     ModerationActionType
+  notes          String?
+  createdAt      DateTime             @default(now())
+
+  report     Report? @relation(fields: [reportId], references: [id], onDelete: SetNull)
+  actorAdmin User?   @relation("ModerationAdmin", fields: [actorAdminId], references: [id], onDelete: SetNull)
+}
+
+model DeviceToken {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String         @db.Uuid
+  platform  DevicePlatform
+  token     String         @unique
+  createdAt DateTime       @default(now())
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

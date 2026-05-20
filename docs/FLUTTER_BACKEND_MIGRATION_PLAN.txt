@@ -1,0 +1,191 @@
+OPPOSE FLUTTER BACKEND MIGRATION PLAN
+Date: 2026-05-19
+
+Purpose:
+Plan how to migrate the existing Flutter mock MVP to real backend services without breaking the polished user flow built through Sprint 11.
+
+Current Flutter architecture:
+- UI screens use lightweight InheritedNotifier scopes.
+- Controllers hold local/mock state.
+- Mock data lives in `lib/state/mock_data/mock_oppose_data.dart`.
+- Service interfaces exist for analytics and can be expanded for API/repositories.
+
+Migration rule:
+Do not rewrite the UI. Add repository boundaries and move one controller at a time from mock data to backend-backed repositories.
+
+================================================================================
+TARGET CLIENT LAYERS
+================================================================================
+
+UI widgets:
+- Render screens and components.
+- Should not call HTTP directly.
+
+Controllers/scopes:
+- Own presentation state.
+- Call repositories.
+- Expose app-friendly state to widgets.
+
+Repositories:
+- Own domain operations.
+- Hide mock/API implementation details.
+- Return domain models or app DTOs.
+
+API clients:
+- Own HTTP/WebSocket details.
+- Add auth headers.
+- Parse network DTOs.
+
+DTO mappers:
+- Convert backend DTOs to existing domain models.
+
+================================================================================
+REPOSITORIES TO ADD
+================================================================================
+
+AuthRepository
+- create session
+- load current user
+- sign out later
+
+UserRepository
+- check username
+- update profile
+- update interests
+- accept AI consent
+
+SocialRepository
+- list friends
+- list friend requests
+- accept/decline requests
+- block/unblock
+- mute/unmute
+
+MessagingRepository
+- list conversations
+- open conversation messages
+- send message
+- mark read
+
+RoomRepository
+- create room
+- update lobby settings
+- invite friend
+- join/leave/end room
+- request LiveKit token later
+
+AIRepository
+- quick action
+- prompt
+- translate later
+- generate summary later
+
+SummaryRepository
+- get summary
+- save/share/delete summary
+
+SafetyRepository
+- submit report
+- list local/current safety state if needed
+
+================================================================================
+MIGRATION ORDER
+================================================================================
+
+Step 1: Repository interfaces with mock implementations
+- Add repository interfaces.
+- Move current mock controller logic behind mock repositories.
+- Keep all UI behavior identical.
+- Existing widget tests should still pass.
+
+Step 2: Auth/profile backend integration
+- Connect onboarding/profile to backend.
+- Persist username, display name, interests, and AI consent.
+- Add loading/error states.
+
+Step 3: Social graph backend integration
+- Load friends and friend requests from backend.
+- Persist block/mute.
+- Update room invite selector to use backend friends.
+
+Step 4: Chat persistence
+- Load conversations/messages from backend.
+- Send messages to backend.
+- Add optimistic send state.
+- Add block enforcement errors.
+
+Step 5: Room backend persistence
+- Create room on backend.
+- Persist room settings and invites.
+- Join/leave/end room via backend.
+
+Step 6: LiveKit voice integration
+- Request backend LiveKit token.
+- Join LiveKit room from Flutter.
+- Replace mock participant/speaking/connection state with LiveKit events.
+
+Step 7: AI backend integration
+- Send AI quick actions/prompts to backend.
+- Use server-side consent checks.
+- Keep Memory Off visible unless backend policy changes.
+
+Step 8: Summary backend integration
+- Generate/fetch summaries from backend.
+- Save/share/delete via backend.
+
+Step 9: Safety backend integration
+- Submit reports to backend.
+- Persist block/mute.
+- Add report confirmation IDs.
+
+================================================================================
+ERROR AND LOADING STATES
+================================================================================
+
+Every backend-backed controller needs:
+- isLoading
+- errorMessage
+- retry action where useful
+- optimistic update rollback where useful
+- safe empty state
+
+Do not block the whole app for one failed surface.
+
+Recommended user copy:
+- Network unavailable: "Could not connect. Try again."
+- Auth expired: "Please sign in again."
+- Blocked action: "This action is unavailable because this user is blocked."
+- AI consent missing: "AI needs your consent before it can help."
+- Report failure: "Report could not be submitted. Please try again."
+
+================================================================================
+TESTING STRATEGY
+================================================================================
+
+Keep current widget tests.
+
+Add repository tests:
+- mock repository returns expected domain objects
+- API mappers parse DTOs correctly
+- controllers handle success/loading/error states
+
+Add backend contract tests later:
+- health endpoint
+- auth guard behavior
+- username availability
+- message send
+- room create
+- report submit
+
+Add integration tests later only after backend APIs stabilize.
+
+================================================================================
+FIRST FLUTTER CODE CHANGE RECOMMENDATION
+================================================================================
+
+After Sprint 12 backend skeleton:
+1. Add repository interface files only.
+2. Add mock repository implementations that wrap current mock state.
+3. Update controllers only when a backend endpoint exists.
+
+This keeps the app shippable while backend work progresses.

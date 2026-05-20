@@ -1,0 +1,775 @@
+OPPOSE SPRINT 12 REAL APP BACKEND PLANNING
+Date: 2026-05-19
+
+Purpose:
+This document plans the transition from the current frontend/mock-state Oppose MVP into a real backend-backed application. The first production target is Oppose. The backend should be designed so some foundations can later support Clash, but Sprint 12 should not build Clash features inside Oppose.
+
+Current status:
+- Oppose Flutter frontend MVP exists through Sprint 11.
+- MVP routes, onboarding, home, chats, room setup, live room UI, AI drawer, summaries, safety/reporting, profile, and social graph are implemented with mock/local state.
+- flutter analyze passes.
+- flutter test passes with 23 widget tests.
+- Android debug APK build is blocked by a malformed local NDK install, not app source errors.
+
+Core Sprint 12 goal:
+Define and prepare the real backend architecture, data model, API boundaries, realtime plan, AI orchestration plan, moderation plan, and migration path from local mock state to production services.
+
+Sprint 12 should be a backend foundation planning and scaffolding sprint, not a full backend implementation sprint.
+
+================================================================================
+1. PRODUCT PRINCIPLES FOR REAL BACKEND
+================================================================================
+
+Oppose must remain:
+- friend-first
+- consent-first for AI
+- safe for respectful disagreement
+- warm and social, not corporate
+- transparent about AI behavior
+- explicit about what is saved, shared, summarized, or reported
+
+Backend systems must enforce:
+- user identity and session security
+- explicit AI consent state
+- room membership and friend-only access rules
+- private vs shared summary visibility
+- report privacy
+- block/mute effects
+- no hidden AI listening
+- no real-money, betting, gambling, crypto, or token economy
+
+Backend systems must not assume:
+- every room is public
+- every room should be recorded
+- every conversation should be summarized
+- AI can observe silently without user action
+- reports can be ignored because they are mock UI today
+
+================================================================================
+2. RECOMMENDED BACKEND DIRECTION
+================================================================================
+
+Recommended practical architecture for the next phase:
+
+Mobile app:
+- Flutter
+- current app remains the client
+- replace local controllers gradually with repository/service interfaces
+
+Backend API:
+- TypeScript backend using NestJS or Fastify
+- REST for normal CRUD
+- WebSocket gateway for presence, room state, typing, and lightweight realtime events
+
+Database:
+- PostgreSQL
+- Prisma ORM or Drizzle ORM
+- row-level access checks enforced in service layer
+
+Realtime voice:
+- LiveKit Cloud or self-hosted LiveKit for WebRTC/SFU
+- backend creates room tokens
+- Flutter client joins LiveKit rooms with scoped tokens
+
+AI orchestration:
+- backend AI service layer, not direct model calls from Flutter
+- model provider can be OpenAI-compatible initially
+- all AI calls require explicit user-triggered action or explicit room setting
+- AI request logs store metadata, not raw private content unless user consent and retention policy allow it
+
+Object storage:
+- S3-compatible storage for avatars and future attachments
+- not required for first backend sprint unless profile image upload is prioritized
+
+Notifications:
+- Firebase Cloud Messaging later
+- not Sprint 12 P0
+
+Analytics/error monitoring:
+- Sentry for crashes/errors
+- product analytics later, after privacy policy decisions
+
+Why this recommendation:
+- PostgreSQL handles social graph, room membership, reports, summaries, and chat well.
+- TypeScript backend has strong ecosystem for auth, API, realtime, and AI orchestration.
+- LiveKit avoids building WebRTC/SFU infrastructure from scratch.
+- Keeping AI calls server-side protects model keys and centralizes consent/safety rules.
+
+Alternative backend options:
+
+Option A: Supabase-first
+- Pros: fast auth, Postgres, storage, realtime, row-level security.
+- Cons: complex realtime voice still needs LiveKit; advanced AI/moderation orchestration may outgrow edge functions.
+- Use if speed is more important than custom backend control.
+
+Option B: Firebase-first
+- Pros: fast mobile auth, FCM, realtime data, good Flutter support.
+- Cons: relational social graph and reporting workflows become less natural; voice and AI still external.
+- Use if push/realtime mobile speed is the highest priority.
+
+Option C: Custom TypeScript + PostgreSQL + LiveKit
+- Pros: best long-term control, clear service boundaries, good fit for social graph/moderation/AI.
+- Cons: more setup than BaaS.
+- Recommended for building a real scalable product foundation.
+
+================================================================================
+3. BACKEND SERVICE BOUNDARIES
+================================================================================
+
+Recommended services/modules:
+
+1. Auth Service
+- user signup/login/session validation
+- provider identity mapping
+- device token registration later
+
+2. User/Profile Service
+- user profile
+- username uniqueness
+- display name
+- avatar
+- interests
+- profile stats
+
+3. Social Graph Service
+- friends
+- friend requests
+- block list
+- mute list
+- friend presence visibility
+
+4. Chat Service
+- conversations
+- participants
+- messages
+- message status
+- direct/group/room conversation types
+- typing events via WebSocket
+
+5. Room Service
+- room creation
+- room lobby
+- room membership
+- room privacy
+- AI mode
+- summary setting
+- room lifecycle
+
+6. Realtime Gateway
+- WebSocket presence
+- room state
+- typing
+- chat message fanout if not using separate realtime infra
+- LiveKit token minting events may stay in Room Service
+
+7. Voice Service
+- LiveKit room creation
+- LiveKit access token generation
+- participant permissions
+- webhook handling for joins/leaves
+
+8. AI Service
+- AI prompt requests
+- quick actions
+- room summary generation
+- translation later
+- moderation assistance later
+- consent and retention checks before model calls
+
+9. Summary Service
+- summary generation records
+- visibility rules
+- save/share/delete
+- room-member access
+
+10. Safety/Moderation Service
+- report submission
+- report target metadata
+- block/mute effects
+- moderation queue states
+- audit trail
+
+11. Notification Service
+- push notifications later
+- friend request notifications
+- room invite notifications
+- report status notifications only if policy allows
+
+12. Admin/Operations Service
+- moderation dashboard later
+- feature flags
+- environment health
+
+================================================================================
+4. PRODUCTION DATA MODEL DRAFT
+================================================================================
+
+Tables/entities:
+
+users
+- id UUID primary key
+- auth_provider_id string unique
+- email nullable
+- phone nullable
+- username string unique
+- display_name string
+- avatar_url nullable
+- language string
+- ai_consent_accepted bool
+- ai_consent_version string
+- created_at timestamp
+- updated_at timestamp
+
+user_interests
+- user_id UUID foreign key
+- interest string
+- created_at timestamp
+
+friendships
+- id UUID primary key
+- requester_id UUID
+- addressee_id UUID
+- status enum: pending, accepted, declined, blocked
+- created_at timestamp
+- updated_at timestamp
+
+user_blocks
+- blocker_id UUID
+- blocked_id UUID
+- created_at timestamp
+
+user_mutes
+- muter_id UUID
+- muted_id UUID
+- created_at timestamp
+- expires_at nullable
+
+conversations
+- id UUID primary key
+- type enum: direct, group, room
+- title nullable
+- created_by UUID
+- created_at timestamp
+- updated_at timestamp
+
+conversation_participants
+- conversation_id UUID
+- user_id UUID
+- role enum: member, admin, owner
+- last_read_message_id nullable
+- joined_at timestamp
+
+messages
+- id UUID primary key
+- conversation_id UUID
+- sender_id UUID nullable for system/AI
+- sender_type enum: user, ai, system
+- body text
+- status enum: sent, delivered, read, failed
+- created_at timestamp
+- deleted_at nullable
+
+rooms
+- id UUID primary key
+- title string
+- topic text
+- room_type enum: quick_hangout, daily_debate, study_talk, custom
+- privacy enum: friends_only, private, public_later
+- status enum: lobby, live, ended
+- created_by UUID
+- ai_mode enum: off, quiet_helper, brainstormer, translator, moderator_lite
+- summary_setting enum: off, private_to_creator, shared_with_room
+- livekit_room_name nullable
+- started_at nullable
+- ended_at nullable
+- created_at timestamp
+- updated_at timestamp
+
+room_participants
+- room_id UUID
+- user_id UUID
+- role enum: host, friend, guest
+- joined_at nullable
+- left_at nullable
+- muted_by_self bool
+- removed_at nullable
+
+room_invites
+- id UUID primary key
+- room_id UUID
+- inviter_id UUID
+- invitee_id UUID
+- status enum: pending, accepted, declined, expired
+- created_at timestamp
+- responded_at nullable
+
+ai_requests
+- id UUID primary key
+- user_id UUID
+- room_id nullable
+- conversation_id nullable
+- request_type enum: quick_action, prompt, summary, translate, moderation_assist
+- ai_mode enum
+- prompt_redacted text nullable
+- response_redacted text nullable
+- status enum: pending, completed, failed, cancelled
+- created_at timestamp
+
+room_summaries
+- id UUID primary key
+- room_id UUID
+- created_by UUID or ai
+- title string
+- visibility enum: private_to_user, shared_with_room
+- content_json jsonb
+- saved_by_user bool
+- deleted_at nullable
+- created_at timestamp
+- updated_at timestamp
+
+reports
+- id UUID primary key
+- reporter_id UUID
+- target_type enum: user, room, chat, message, general
+- target_id UUID nullable
+- reason enum: harassment, spam, unsafe_behavior, hate_or_discrimination, privacy_concern, other
+- details text nullable
+- status enum: submitted, triaged, actioned, dismissed
+- created_at timestamp
+- updated_at timestamp
+
+moderation_actions
+- id UUID primary key
+- report_id UUID nullable
+- actor_admin_id UUID nullable
+- target_user_id UUID nullable
+- action_type enum: warn, suspend, remove_content, dismiss, escalate
+- notes text nullable
+- created_at timestamp
+
+device_tokens
+- id UUID primary key
+- user_id UUID
+- platform enum: ios, android
+- token string
+- created_at timestamp
+- revoked_at nullable
+
+================================================================================
+5. API SURFACE DRAFT
+================================================================================
+
+Auth/Profile:
+- POST /auth/session
+- GET /me
+- PATCH /me/profile
+- PATCH /me/interests
+- POST /me/ai-consent
+- GET /users/check-username?username=
+
+Social:
+- GET /friends
+- GET /friend-requests
+- POST /friend-requests
+- POST /friend-requests/{id}/accept
+- POST /friend-requests/{id}/decline
+- POST /users/{id}/block
+- DELETE /users/{id}/block
+- POST /users/{id}/mute
+- DELETE /users/{id}/mute
+
+Chats:
+- GET /conversations
+- POST /conversations
+- GET /conversations/{id}/messages
+- POST /conversations/{id}/messages
+- POST /conversations/{id}/read
+
+Rooms:
+- POST /rooms
+- GET /rooms/{id}
+- PATCH /rooms/{id}
+- POST /rooms/{id}/invite
+- POST /rooms/{id}/join
+- POST /rooms/{id}/leave
+- POST /rooms/{id}/end
+- POST /rooms/{id}/livekit-token
+
+AI:
+- POST /ai/quick-action
+- POST /ai/prompt
+- POST /ai/translate
+- POST /rooms/{id}/summary/generate
+
+Summaries:
+- GET /rooms/{id}/summary
+- POST /rooms/{id}/summary/save
+- POST /rooms/{id}/summary/share
+- DELETE /rooms/{id}/summary
+
+Safety:
+- POST /reports
+- GET /reports/mine optional later
+
+WebSocket events:
+- presence.online
+- presence.offline
+- conversation.typing
+- conversation.message.created
+- room.participant.joined
+- room.participant.left
+- room.ai.status_changed
+- room.connection.state_changed if needed
+- room.summary.ready
+
+================================================================================
+6. FLUTTER MIGRATION STRATEGY
+================================================================================
+
+Current Flutter app uses controllers and scopes with local/mock state.
+
+Migration approach:
+1. Keep UI widgets mostly intact.
+2. Add repository interfaces under lib/services or lib/repositories.
+3. Move mock logic behind repository implementations.
+4. Add API implementations after backend exists.
+5. Swap controllers from direct mock data to repositories.
+6. Preserve widget tests with mock repositories.
+7. Add integration tests later.
+
+Recommended client layers:
+- controllers/scopes: presentation state
+- repositories: app operations and data fetching
+- api clients: HTTP/WebSocket implementation
+- DTOs: network payloads
+- domain models: app concepts
+
+First repositories to introduce:
+- AuthRepository
+- UserRepository
+- SocialRepository
+- MessagingRepository
+- RoomRepository
+- AIRepository
+- SafetyRepository
+- SummaryRepository
+
+Do not connect Flutter directly to AI providers or LiveKit admin APIs.
+
+================================================================================
+7. AUTH AND IDENTITY PLAN
+================================================================================
+
+Production auth requirements:
+- support email/phone or provider auth
+- stable server user ID
+- username uniqueness
+- account creation timestamp
+- AI consent versioning
+- optional age/region gates later if required
+
+Recommended first implementation:
+- use Supabase Auth, Firebase Auth, or custom JWT provider depending on backend choice
+- backend validates token on every request
+- backend owns app user record
+
+Important:
+- do not trust client-provided user IDs
+- do not let username changes bypass uniqueness check
+- do not let AI features run before AI consent is accepted
+
+================================================================================
+8. REALTIME CHAT PLAN
+================================================================================
+
+Minimum real chat:
+- persistent conversations
+- persistent messages
+- participants
+- read state
+- block/mute enforcement
+
+Realtime options:
+- WebSocket gateway owned by backend
+- managed realtime from Supabase/Firebase if BaaS chosen
+
+Rules:
+- blocked users cannot send direct messages to blocker
+- muted users can still exist but notifications/audio can be suppressed
+- AI messages must be clearly marked sender_type=ai
+- system messages must be clearly marked sender_type=system
+
+================================================================================
+9. REAL VOICE ROOM PLAN
+================================================================================
+
+Recommended: LiveKit.
+
+Backend responsibilities:
+- create LiveKit room when Oppose room starts
+- generate scoped LiveKit participant tokens
+- validate user membership before token generation
+- handle LiveKit webhooks for join/leave if needed
+- map LiveKit participant identity to Oppose user ID
+
+Flutter responsibilities:
+- request microphone permission
+- join room with token
+- render participants and speaking state from LiveKit events
+- let user mute self
+- show connection state from LiveKit
+
+Do not build custom WebRTC/SFU in early real-app phase.
+
+================================================================================
+10. AI ORCHESTRATION PLAN
+================================================================================
+
+AI must be backend-mediated.
+
+AI principles:
+- user-triggered by explicit action
+- visible in UI
+- consent checked server-side
+- memory off by default
+- no hidden listening
+- no autonomous actions
+
+AI request types:
+- quick action: summarize so far, suggest better question, explain both sides
+- prompt: user asks a question
+- translation: only requested text/messages
+- room summary: after room ends and summary setting allows it
+- moderation assist: internal/admin later, not user-facing autonomous action
+
+Input sources:
+- direct prompt text
+- selected chat messages if user asks
+- room transcript only if transcript capture is explicitly enabled and consented
+- room metadata for lightweight summaries if no transcript exists
+
+Retention policy needed before production:
+- whether prompts are stored
+- whether responses are stored
+- whether transcripts are stored
+- how deletion works
+- how summary deletion works
+
+================================================================================
+11. SAFETY AND MODERATION PLAN
+================================================================================
+
+Minimum production moderation:
+- reports persist to database
+- reports include target type, target ID, reason, details, reporter ID
+- reports are private to reporter and moderation/admin systems
+- block/mute are enforced in chat and room token generation where relevant
+- backend records moderation status
+
+Future admin tools:
+- report queue
+- report detail view
+- user history
+- room/message context
+- action buttons: dismiss, warn, suspend, remove content, escalate
+
+Do not expose report status publicly until policy is defined.
+
+================================================================================
+12. SECURITY AND PRIVACY REQUIREMENTS
+================================================================================
+
+P0 requirements:
+- authenticated requests only for private app data
+- server validates ownership/membership
+- server validates friend/room access
+- server validates block/mute restrictions
+- server validates AI consent before AI calls
+- model API keys never ship to Flutter client
+- LiveKit admin keys never ship to Flutter client
+- reports are not readable by normal users other than limited reporter acknowledgement
+
+P1 requirements:
+- rate limiting
+- abuse detection for reports/messages/invites
+- audit logs for moderation actions
+- account deletion workflow
+- data export/deletion policy
+- secure media upload path
+
+================================================================================
+13. SPRINT 12 IMPLEMENTATION OPTIONS
+================================================================================
+
+Option 1: Planning-only sprint
+- create backend architecture docs
+- create data model docs
+- create API contract docs
+- choose backend stack
+- fix Android toolchain
+- no backend code yet
+
+Option 2: Backend skeleton sprint
+- create backend folder
+- initialize TypeScript service
+- add health endpoint
+- add database schema draft
+- add Docker Compose for Postgres
+- no Flutter integration yet
+
+Option 3: Persistence-first sprint
+- add repositories in Flutter
+- keep mock implementations
+- prepare app for API swap
+- no backend service yet
+
+Recommended Sprint 12 choice:
+Option 2 plus part of Option 1.
+
+Reason:
+- The MVP is already documented.
+- To become real, the project needs a backend repo/folder and running service foundation.
+- API contracts and schema can evolve alongside a small backend skeleton.
+
+================================================================================
+14. RECOMMENDED SPRINT 12 SCOPE
+================================================================================
+
+Sprint 12 name:
+Backend Foundation And Contracts
+
+Sprint 12 goals:
+1. Choose backend stack.
+2. Create backend service skeleton.
+3. Add database schema draft/migrations.
+4. Add API contract docs.
+5. Add repository migration plan for Flutter.
+6. Fix Android NDK/toolchain if possible.
+
+Sprint 12 deliverables:
+- backend/ folder or Oppose/backend/ folder decision
+- TypeScript backend initialized
+- health endpoint
+- environment config pattern
+- Postgres Docker Compose
+- initial Prisma/Drizzle schema draft
+- README for backend run commands
+- docs/API_CONTRACTS_V1.txt
+- docs/DATABASE_SCHEMA_V1.txt
+- docs/FLUTTER_BACKEND_MIGRATION_PLAN.txt
+- Android NDK fix attempt documented
+
+Sprint 12 acceptance criteria:
+- backend service can run locally
+- health endpoint returns ok
+- database can start locally
+- schema exists for core entities
+- no secrets committed
+- Flutter app still passes analyze/tests
+- Android build either succeeds or the toolchain blocker is documented with next action
+
+================================================================================
+15. RECOMMENDED BACKEND FOLDER STRUCTURE
+================================================================================
+
+Option A: Oppose/backend
+- good if backend is Oppose-specific for now
+- simple mental model
+- avoids accidentally mixing Clash too early
+
+Option B: backend
+- good if shared platform backend will support Oppose and Clash
+- requires app namespacing from day one
+
+Recommendation:
+Use Oppose/backend for Sprint 12.
+
+Reason:
+- Oppose is the only implemented app today.
+- Clash requirements are not implemented yet.
+- Keep backend focused and avoid premature multi-product abstraction.
+- Later, shared modules can be extracted when Clash starts.
+
+================================================================================
+16. FIRST REAL BACKEND MILESTONES AFTER SPRINT 12
+================================================================================
+
+Sprint 13 candidate:
+Real Auth And Profile Persistence
+- auth provider chosen
+- user profile stored in database
+- username availability endpoint
+- onboarding writes to backend
+- app loads current user from backend
+
+Sprint 14 candidate:
+Real Social Graph And Direct Chat Persistence
+- friend list from backend
+- friend requests from backend
+- direct chat conversations from backend
+- messages persisted
+- block/mute enforced
+
+Sprint 15 candidate:
+Real Room Lobby And LiveKit Integration
+- create rooms in backend
+- invite friends from backend social graph
+- LiveKit room token generation
+- real mic join/leave
+
+Sprint 16 candidate:
+AI Backend Orchestration
+- server-side AI prompt endpoint
+- quick actions endpoint
+- consent checks
+- prompt/response logging policy
+- mock transcript or metadata summary
+
+Sprint 17 candidate:
+Real Reports And Moderation Queue
+- reports persist
+- moderation queue skeleton
+- block/mute persist
+- report confirmation IDs
+
+================================================================================
+17. IMMEDIATE NEXT ACTIONS
+================================================================================
+
+Before implementing Sprint 12, decide:
+1. Backend stack: custom TypeScript + Postgres + LiveKit, Supabase-first, or Firebase-first.
+2. Backend location: Oppose/backend or root backend.
+3. ORM: Prisma or Drizzle.
+4. Auth provider: Supabase Auth, Firebase Auth, Auth0, Clerk, or custom JWT.
+5. Voice provider: LiveKit Cloud or self-hosted LiveKit.
+6. AI provider: OpenAI-compatible API first, with provider abstraction.
+
+Recommended default decisions if owner wants fastest high-quality path:
+- Backend: custom TypeScript with Fastify or NestJS
+- Database: PostgreSQL
+- ORM: Prisma
+- Voice: LiveKit Cloud first
+- Auth: Supabase Auth or Clerk for speed, backend-owned user profiles
+- AI: server-side OpenAI-compatible abstraction
+- Location: Oppose/backend
+
+================================================================================
+18. FINAL RECOMMENDATION
+================================================================================
+
+Do not start real AI, real voice, or real chat all at once.
+
+Start with backend skeleton, schema, auth/profile persistence, and API contracts. Then migrate one app surface at a time from mock state to real repositories.
+
+The safest order is:
+1. Backend skeleton and database.
+2. Auth/profile persistence.
+3. Social graph.
+4. Direct chat persistence.
+5. Room creation/lobby persistence.
+6. LiveKit real voice.
+7. AI orchestration.
+8. Reports/moderation queue.
+9. Notifications.
+
+This order turns the demo MVP into a real product without breaking the polished frontend loop already built.
