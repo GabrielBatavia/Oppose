@@ -85,10 +85,8 @@ class _OpposeAppState extends State<OpposeApp> {
     _router = createAppRouter();
   }
 
-  static bool get _shouldUseBackend => bool.fromEnvironment(
-    'OPPOSE_USE_BACKEND',
-    defaultValue: false,
-  );
+  static bool get _shouldUseBackend =>
+      bool.fromEnvironment('OPPOSE_USE_BACKEND', defaultValue: false);
 
   static UserRepository _createUserRepository() {
     if (!_shouldUseBackend) return MockUserRepository();
