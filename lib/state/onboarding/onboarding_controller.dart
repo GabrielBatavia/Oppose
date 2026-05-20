@@ -2,16 +2,24 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
+import '../../repositories/user/user_repository.dart';
 import '../../services/analytics/analytics_service.dart';
+import '../../types/domain_models.dart';
 
 enum OpposeLanguage { english, indonesia }
 
 enum UsernameAvailability { empty, invalid, checking, available, unavailable }
 
 class OnboardingController extends ChangeNotifier {
-  OnboardingController({required this.analytics});
+  OnboardingController({
+    required this.analytics,
+    required this.userRepository,
+    this.onCurrentUserChanged,
+  });
 
   final AnalyticsService analytics;
+  final UserRepository userRepository;
+  final ValueChanged<OpposeUser>? onCurrentUserChanged;
 
   Timer? _usernameDebounce;
 
@@ -25,7 +33,10 @@ class OnboardingController extends ChangeNotifier {
   bool usernameSubmitted = false;
   bool isSigningUp = false;
   bool isSavingUsername = false;
+  bool isSavingInterests = false;
+  bool isSavingAIConsent = false;
   bool aiConsentAccepted = false;
+  String? errorMessage;
   UsernameAvailability usernameAvailability = UsernameAvailability.empty;
   final Set<String> selectedInterests = {'Technology', 'Friendship'};
 
@@ -80,11 +91,13 @@ class OnboardingController extends ChangeNotifier {
 
   void setEmailOrPhone(String value) {
     emailOrPhone = value;
+    errorMessage = null;
     if (signUpSubmitted) notifyListeners();
   }
 
   void setPassword(String value) {
     password = value;
+    errorMessage = null;
     if (signUpSubmitted) notifyListeners();
   }
 
@@ -113,11 +126,13 @@ class OnboardingController extends ChangeNotifier {
 
   void setDisplayName(String value) {
     displayName = value;
+    errorMessage = null;
     if (usernameSubmitted) notifyListeners();
   }
 
   void setUsername(String value) {
     username = value.trim().replaceFirst(RegExp(r'^@'), '').toLowerCase();
+    errorMessage = null;
     _usernameDebounce?.cancel();
 
     if (username.isEmpty) {
@@ -126,7 +141,7 @@ class OnboardingController extends ChangeNotifier {
       return;
     }
 
-    final isValid = RegExp(r'^[a-z0-9_]{3,20}$').hasMatch(username);
+    final isValid = RegExp(r'^[a-z0-9_]{3,24}$').hasMatch(username);
     if (!isValid) {
       usernameAvailability = UsernameAvailability.invalid;
       notifyListeners();
@@ -135,11 +150,22 @@ class OnboardingController extends ChangeNotifier {
 
     usernameAvailability = UsernameAvailability.checking;
     notifyListeners();
-    _usernameDebounce = Timer(const Duration(milliseconds: 450), () {
-      const unavailable = {'admin', 'opppose', 'oppose', 'maya', 'raka'};
-      usernameAvailability = unavailable.contains(username)
-          ? UsernameAvailability.unavailable
-          : UsernameAvailability.available;
+    final checkedUsername = username;
+    _usernameDebounce = Timer(const Duration(milliseconds: 450), () async {
+      try {
+        final available = await userRepository.checkUsernameAvailability(
+          checkedUsername,
+        );
+        if (username != checkedUsername) return;
+        usernameAvailability = available
+            ? UsernameAvailability.available
+            : UsernameAvailability.unavailable;
+      } catch (_) {
+        if (username != checkedUsername) return;
+        usernameAvailability = UsernameAvailability.unavailable;
+        errorMessage = 'Could not check username. Try again.';
+      }
+
       if (usernameAvailability == UsernameAvailability.available) {
         unawaited(
           analytics.track('username_available', {
@@ -153,6 +179,7 @@ class OnboardingController extends ChangeNotifier {
 
   Future<bool> submitUsername() async {
     usernameSubmitted = true;
+    errorMessage = null;
     unawaited(
       analytics.track('username_submitted', {
         'username_length': username.length,
@@ -163,14 +190,26 @@ class OnboardingController extends ChangeNotifier {
 
     isSavingUsername = true;
     notifyListeners();
-    await Future<void>.delayed(const Duration(milliseconds: 250));
-    isSavingUsername = false;
-    unawaited(analytics.track('profile_completed', {'has_avatar': false}));
-    notifyListeners();
-    return true;
+    try {
+      final user = await userRepository.updateProfile(
+        displayName: displayName.trim(),
+        username: username,
+        language: isEnglish ? 'en' : 'id',
+      );
+      onCurrentUserChanged?.call(user);
+      unawaited(analytics.track('profile_completed', {'has_avatar': false}));
+      return true;
+    } catch (_) {
+      errorMessage = 'Could not save profile. Try again.';
+      return false;
+    } finally {
+      isSavingUsername = false;
+      notifyListeners();
+    }
   }
 
   void toggleInterest(String interest) {
+    errorMessage = null;
     if (selectedInterests.contains(interest)) {
       selectedInterests.remove(interest);
     } else {
@@ -179,27 +218,54 @@ class OnboardingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> continueInterests({required bool skipped}) async {
-    unawaited(
-      analytics.track('interests_selected', {
-        'count': selectedInterests.length,
-        'skipped': skipped,
-      }),
-    );
+  Future<bool> continueInterests({required bool skipped}) async {
+    isSavingInterests = true;
+    errorMessage = null;
+    notifyListeners();
+    try {
+      final interests = skipped ? <String>[] : selectedInterests.toList();
+      final user = await userRepository.updateInterests(interests);
+      onCurrentUserChanged?.call(user);
+      unawaited(
+        analytics.track('interests_selected', {
+          'count': interests.length,
+          'skipped': skipped,
+        }),
+      );
+      return true;
+    } catch (_) {
+      errorMessage = 'Could not save interests. Try again.';
+      return false;
+    } finally {
+      isSavingInterests = false;
+      notifyListeners();
+    }
   }
 
   Future<void> viewAIConsent() async {
     await analytics.track('ai_consent_viewed', {'source': 'onboarding'});
   }
 
-  Future<void> acceptAIConsent() async {
-    aiConsentAccepted = true;
+  Future<bool> acceptAIConsent() async {
+    isSavingAIConsent = true;
+    errorMessage = null;
     notifyListeners();
-    await analytics.track('ai_consent_accepted', {'memory_enabled': false});
-    await analytics.track('onboarding_completed', {
-      'interests_count': selectedInterests.length,
-      'language': language.name,
-    });
+    try {
+      await userRepository.acceptAIConsent(version: '2026-05-20-dev');
+      aiConsentAccepted = true;
+      await analytics.track('ai_consent_accepted', {'memory_enabled': false});
+      await analytics.track('onboarding_completed', {
+        'interests_count': selectedInterests.length,
+        'language': language.name,
+      });
+      return true;
+    } catch (_) {
+      errorMessage = 'Could not save AI consent. Try again.';
+      return false;
+    } finally {
+      isSavingAIConsent = false;
+      notifyListeners();
+    }
   }
 
   @override

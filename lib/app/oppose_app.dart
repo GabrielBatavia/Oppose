@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'navigation/app_router.dart';
+import '../repositories/backend_api_client.dart';
+import '../repositories/user/backend_user_repository.dart';
+import '../repositories/user/mock_user_repository.dart';
+import '../repositories/user/user_repository.dart';
 import '../services/analytics/analytics_service.dart';
 import '../state/ai_interaction/ai_interaction_controller.dart';
 import '../state/ai_interaction/ai_interaction_scope.dart';
@@ -22,7 +28,9 @@ import '../state/social/social_scope.dart';
 import '../theme/oppose_theme.dart';
 
 class OpposeApp extends StatefulWidget {
-  const OpposeApp({super.key});
+  const OpposeApp({super.key, this.userRepository});
+
+  final UserRepository? userRepository;
 
   @override
   State<OpposeApp> createState() => _OpposeAppState();
@@ -37,13 +45,21 @@ class _OpposeAppState extends State<OpposeApp> {
   late final RoomSummaryController _roomSummaryController;
   late final SafetyController _safetyController;
   late final SocialController _socialController;
+  late final UserRepository _userRepository;
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
+    _userRepository = widget.userRepository ?? _createUserRepository();
+    _socialController = SocialController(
+      analytics: const NoopAnalyticsService(),
+      userRepository: _userRepository,
+    );
     _onboardingController = OnboardingController(
       analytics: const NoopAnalyticsService(),
+      userRepository: _userRepository,
+      onCurrentUserChanged: _socialController.setCurrentUser,
     );
     _messagingController = MessagingController(
       analytics: const NoopAnalyticsService(),
@@ -63,10 +79,31 @@ class _OpposeAppState extends State<OpposeApp> {
     _safetyController = SafetyController(
       analytics: const NoopAnalyticsService(),
     );
-    _socialController = SocialController(
-      analytics: const NoopAnalyticsService(),
-    );
+    if (widget.userRepository == null && _shouldUseBackend) {
+      unawaited(_socialController.loadCurrentUser());
+    }
     _router = createAppRouter();
+  }
+
+  static bool get _shouldUseBackend => bool.fromEnvironment(
+    'OPPOSE_USE_BACKEND',
+    defaultValue: false,
+  );
+
+  static UserRepository _createUserRepository() {
+    if (!_shouldUseBackend) return MockUserRepository();
+
+    const backendUrl = String.fromEnvironment(
+      'OPPOSE_BACKEND_URL',
+      defaultValue: 'http://localhost:4000',
+    );
+    const devUserId = String.fromEnvironment(
+      'OPPOSE_DEV_USER_ID',
+      defaultValue: '00000000-0000-4000-8000-000000000001',
+    );
+    return BackendUserRepository(
+      client: BackendApiClient(baseUrl: backendUrl, devUserId: devUserId),
+    );
   }
 
   @override
