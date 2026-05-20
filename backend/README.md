@@ -52,6 +52,16 @@ The seeded dev user matches the Flutter mock identity:
 
 Do not use `x-dev-user-id` as a production auth pattern. Production auth must derive current user from a verified provider token/session.
 
+## Local Database Port
+
+Docker maps Postgres container port `5432` to host port `5433`:
+
+```text
+postgresql://oppose:oppose_dev_password@localhost:5433/oppose_dev?schema=public
+```
+
+This avoids conflicts with local PostgreSQL services that may already use host port `5432`.
+
 ## Sprint 13 Endpoints
 
 - `GET /users/check-username?username=thinkwithbima`
@@ -65,9 +75,12 @@ Do not use `x-dev-user-id` as a production auth pattern. Production auth must de
 ```bash
 npm run check
 npm run build
+npm run test
 npx prisma validate
 docker compose config
 ```
+
+`npm run test` uses Node's built-in test runner. Database-backed tests run when local Postgres is reachable and are skipped only when Docker/Postgres is unavailable.
 
 ## Notes
 
