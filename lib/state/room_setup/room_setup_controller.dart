@@ -84,6 +84,13 @@ class RoomSetupController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeInvitedFriends(Set<String> friendIds) {
+    final before = invitedFriendIds.length;
+    invitedFriendIds.removeAll(friendIds);
+    if (invitedFriendIds.length == before) return;
+    notifyListeners();
+  }
+
   void selectAIMode(AIMode mode, {String source = 'create_room'}) {
     selectedAIMode = mode;
     unawaited(

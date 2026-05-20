@@ -34,6 +34,21 @@ class MockOpposeData {
     ),
   ];
 
+  static const friendRequests = <FriendRequest>[
+    FriendRequest(
+      id: 'nadia',
+      displayName: 'Nadia',
+      username: 'nadiaNuance',
+      status: FriendRequestStatus.pending,
+    ),
+    FriendRequest(
+      id: 'dito',
+      displayName: 'Dito',
+      username: 'ditoDebates',
+      status: FriendRequestStatus.pending,
+    ),
+  ];
+
   static const conversations = <Conversation>[
     Conversation(
       id: 'maya_direct',

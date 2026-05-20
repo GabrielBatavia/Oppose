@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../components/buttons/oppose_buttons.dart';
-import '../../../state/mock_data/mock_oppose_data.dart';
 import '../../../state/room_setup/room_setup_controller.dart';
+import '../../../state/safety/safety_scope.dart';
+import '../../../state/social/social_scope.dart';
 import '../../../theme/oppose_spacing.dart';
 import 'invite_friend_selector.dart';
 
@@ -13,6 +14,17 @@ class RoomInviteSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final social = SocialScope.watch(context);
+    final safety = SafetyScope.watch(context);
+    final blockedInvited = safety.blockedUserIds.intersection(
+      setup.invitedFriendIds,
+    );
+    if (blockedInvited.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setup.removeInvitedFriends(blockedInvited);
+      });
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -21,12 +33,13 @@ class RoomInviteSheet extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: OpposeSpacing.sm),
-        const Text('Invites are local mock state for now.'),
+        const Text('Invites are local demo state for now.'),
         const SizedBox(height: OpposeSpacing.lg),
         InviteFriendSelector(
-          friends: MockOpposeData.friends,
+          friends: social.friends,
           selectedFriendIds: setup.invitedFriendIds,
           onToggleFriend: setup.toggleFriend,
+          disabledFriendIds: safety.blockedUserIds,
           onAddMore: () {},
         ),
         const SizedBox(height: OpposeSpacing.lg),

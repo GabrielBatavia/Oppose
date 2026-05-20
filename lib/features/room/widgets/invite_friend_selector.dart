@@ -13,12 +13,14 @@ class InviteFriendSelector extends StatelessWidget {
     required this.selectedFriendIds,
     required this.onToggleFriend,
     required this.onAddMore,
+    this.disabledFriendIds = const <String>{},
   });
 
   final List<Friend> friends;
   final Set<String> selectedFriendIds;
   final ValueChanged<String> onToggleFriend;
   final VoidCallback onAddMore;
+  final Set<String> disabledFriendIds;
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +37,27 @@ class InviteFriendSelector extends StatelessWidget {
           }
 
           final friend = friends[index];
-          final selected = selectedFriendIds.contains(friend.id);
+          final disabled = disabledFriendIds.contains(friend.id);
+          final selected = selectedFriendIds.contains(friend.id) && !disabled;
           return InkWell(
             borderRadius: BorderRadius.circular(OpposeRadius.lg),
-            onTap: () => onToggleFriend(friend.id),
+            onTap: disabled ? null : () => onToggleFriend(friend.id),
             child: Container(
               width: 92,
               padding: const EdgeInsets.all(OpposeSpacing.sm),
               decoration: BoxDecoration(
-                color: selected
+                color: disabled
+                    ? OpposeColors.warmBorder.withValues(alpha: 0.28)
+                    : selected
                     ? OpposeColors.mint.withValues(alpha: 0.28)
                     : OpposeColors.paper,
                 borderRadius: BorderRadius.circular(OpposeRadius.lg),
                 border: Border.all(
-                  color: selected ? OpposeColors.mint : OpposeColors.warmBorder,
+                  color: disabled
+                      ? OpposeColors.mutedGray
+                      : selected
+                      ? OpposeColors.mint
+                      : OpposeColors.warmBorder,
                   width: selected ? 2 : 1,
                 ),
               ),
@@ -79,6 +88,15 @@ class InviteFriendSelector extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (disabled)
+                    const Text(
+                      'Blocked',
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: OpposeColors.maroon,
+                      ),
+                    ),
                 ],
               ),
             ),

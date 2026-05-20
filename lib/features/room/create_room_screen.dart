@@ -9,9 +9,10 @@ import '../../components/inputs/oppose_text_input.dart';
 import '../../components/layout/oppose_header.dart';
 import '../../components/layout/oppose_screen.dart';
 import '../../components/stickers/sticker_image.dart';
-import '../../state/mock_data/mock_oppose_data.dart';
 import '../../state/room_setup/room_setup_controller.dart';
 import '../../state/room_setup/room_setup_scope.dart';
+import '../../state/safety/safety_scope.dart';
+import '../../state/social/social_scope.dart';
 import '../../theme/oppose_colors.dart';
 import '../../theme/oppose_spacing.dart';
 import '../../types/domain_models.dart';
@@ -43,6 +44,20 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   @override
   Widget build(BuildContext context) {
     final setup = RoomSetupScope.watch(context);
+    final social = SocialScope.watch(context);
+    final safety = SafetyScope.watch(context);
+    final blockedInvited = safety.blockedUserIds.intersection(
+      setup.invitedFriendIds,
+    );
+    if (blockedInvited.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        setup.removeInvitedFriends(blockedInvited);
+      });
+    }
+    final selectedCount = setup.invitedFriendIds
+        .difference(safety.blockedUserIds)
+        .length;
 
     return OpposeScreen(
       showBottomNavigation: true,
@@ -99,11 +114,12 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         const SizedBox(height: OpposeSpacing.md),
         CreateRoomSection(
           title: 'Invite friends',
-          subtitle: '${setup.invitedFriendIds.length} selected',
+          subtitle: '$selectedCount selected',
           child: InviteFriendSelector(
-            friends: MockOpposeData.friends,
+            friends: social.friends,
             selectedFriendIds: setup.invitedFriendIds,
             onToggleFriend: setup.toggleFriend,
+            disabledFriendIds: safety.blockedUserIds,
             onAddMore: () => ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Friend picker is coming soon.')),
             ),
